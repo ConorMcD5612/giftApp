@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B00596662CB1EFA600F74C36 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B00596652CB1EF9C00F74C36 /* .gitignore */; };
+		B005966A2CB1F0E100F74C36 /* .env in Resources */ = {isa = PBXBuildFile; fileRef = B00596692CB1F0DC00F74C36 /* .env */; };
+		B005966E2CB1F1CD00F74C36 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B005966D2CB1F1CD00F74C36 /* GoogleService-Info.plist */; };
 		B04840F42CB1CDCF0037110A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B04840F32CB1CDCF0037110A /* FirebaseAuth */; };
 		B04840F62CB1CDCF0037110A /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B04840F52CB1CDCF0037110A /* FirebaseCore */; };
 		B04840F82CB1CDCF0037110A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B04840F72CB1CDCF0037110A /* FirebaseFirestore */; };
@@ -30,6 +33,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B00596652CB1EF9C00F74C36 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		B00596692CB1F0DC00F74C36 /* .env */ = {isa = PBXFileReference; lastKnownFileType = text; path = .env; sourceTree = "<group>"; };
+		B005966D2CB1F1CD00F74C36 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B04840C52CB1CBB40037110A /* giftApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = giftApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B04840D52CB1CBB60037110A /* giftAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = giftAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B04840DF2CB1CBB60037110A /* giftAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = giftAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,10 +90,13 @@
 		B04840BC2CB1CBB40037110A = {
 			isa = PBXGroup;
 			children = (
+				B00596692CB1F0DC00F74C36 /* .env */,
+				B00596652CB1EF9C00F74C36 /* .gitignore */,
 				B04840C72CB1CBB40037110A /* giftApp */,
 				B04840D82CB1CBB60037110A /* giftAppTests */,
 				B04840E22CB1CBB60037110A /* giftAppUITests */,
 				B04840C62CB1CBB40037110A /* Products */,
+				B005966D2CB1F1CD00F74C36 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -227,6 +236,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B005966A2CB1F0E100F74C36 /* .env in Resources */,
+				B00596662CB1EFA600F74C36 /* .gitignore in Resources */,
+				B005966E2CB1F1CD00F74C36 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
