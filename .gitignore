@@ -1,6 +1,6 @@
 #firebase
 	
-GoogleService-Info.plist
+GoogleService-Info*.plist
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/xcode,swift

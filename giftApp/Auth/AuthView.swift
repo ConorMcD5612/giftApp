@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import GoogleSignInSwift
+import GoogleSignInSwift
 
 struct AuthView: View {
     
@@ -13,17 +15,62 @@ struct AuthView: View {
     
     var body: some View {
         VStack {
-            TextField("Username", text: $appController.username)
-            TextField("Password", text: $appController.password)
-            
-            Button("Sign In") {
-              signIn()
+            ZStack {
+                
+                
+                
+                
+                VStack {
+                    Section {
+                        GoogleSignInButton(scheme: .light, style: .wide, state: .normal) {
+                            GSignIn()
+                        }
+                        .padding(10)
+                    }
+
+                   
+                    Form {
+                       
+                        Section {
+                            VStack(alignment: .leading) {
+                                Text("Username")
+                                TextField("", text: $appController.username)
+                                
+                                Spacer()
+                                
+                                Text("Password")
+                                TextField("", text: $appController.password)
+                                
+                                
+                                
+                                Button( action: signIn) {
+                                    Text("Sign In")
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.borderedProminent)
+                                
+                            }
+                            
+                        }
+                        .padding(10)
+                        
+                    }
+                    .listRowSeparator(.hidden)
+                    
+                    
+                }
+                .textFieldStyle(.roundedBorder)
+                
+                Section {
+                    HStack {
+                        Text("Don't have an account?")
+                        Button("Sign Up") {
+                            signUp()
+                        }
+                    }
+                }
             }
             
-            Text("Don't have an account?")
-            Button("Sign Up") {
-                signUp()
-            }
         }
     }
     
@@ -46,7 +93,18 @@ struct AuthView: View {
             }
         }
     }
-
+    
+    
+    func GSignIn() {
+        Task {
+            do {
+                try await appController.GSignIn()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
 }
 
 #Preview {
