@@ -13,7 +13,7 @@ struct GiftApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                //ContentView()
+                //HomeView()
                 AuthView()
                 //can use this for 17, need to use env obj for 16
                     .environmentObject(appController)
