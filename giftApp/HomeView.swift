@@ -9,17 +9,17 @@ import SwiftUI
 
 struct HomeView: View {
     var body: some View {
-        TabView() {
+        TabView {
             PeopleView()
-                .tabItem() {
+                .tabItem {
                     Image(systemName: "person")
                 }
-            PeopleView()
-                .tabItem() {
+            GroupsView()
+                .tabItem {
                     Image(systemName: "person.2")
                 }
-            PeopleView()
-                .tabItem() {
+            CalendarView()
+                .tabItem {
                     Image(systemName: "calendar")
                 }
         }

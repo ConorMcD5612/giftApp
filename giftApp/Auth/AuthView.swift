@@ -39,7 +39,7 @@ struct AuthView: View {
                                 Spacer()
                                 
                                 Text("Password")
-                                TextField("", text: $appController.password)
+                                SecureField("", text: $appController.password)
                                 
                                 
                                 
