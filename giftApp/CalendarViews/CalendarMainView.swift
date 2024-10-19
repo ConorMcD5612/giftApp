@@ -1,5 +1,5 @@
 //
-//  GroupsView.swift
+//  CalendarMainView.swift
 //  giftApp
 //
 //  Created by jmathies on 10/16/24.
@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct GroupsView: View {
+struct CalendarMainView: View {
     var body: some View {
-        Text("Groups View")
+        Text("Calendar View")
     }
 }
 
 #Preview {
-    GroupsView()
+    CalendarMainView()
 }
