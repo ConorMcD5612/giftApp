@@ -74,6 +74,11 @@
 			path = giftAppUITests;
 			sourceTree = "<group>";
 		};
+		B0B016EE2CC1583000136432 /* Auth */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Auth;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +116,7 @@
 			children = (
 				B00596692CB1F0DC00F74C36 /* .env */,
 				B00596652CB1EF9C00F74C36 /* .gitignore */,
+				B0B016EE2CC1583000136432 /* Auth */,
 				B04840C72CB1CBB40037110A /* giftApp */,
 				B04840D82CB1CBB60037110A /* giftAppTests */,
 				B04840E22CB1CBB60037110A /* giftAppUITests */,
@@ -146,6 +152,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				B04840C72CB1CBB40037110A /* giftApp */,
+				B0B016EE2CC1583000136432 /* Auth */,
 			);
 			name = giftApp;
 			packageProductDependencies = (
