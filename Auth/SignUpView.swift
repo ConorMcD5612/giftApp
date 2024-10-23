@@ -8,11 +8,29 @@
 import SwiftUI
 
 struct SignUpView: View {
+    @Binding var signingUp: Bool
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(spacing: 15) {
+            VStack {
+                Text("Sign Up")
+                    .font(.largeTitle)
+                Text("Make an account for giftApp")
+                    .foregroundColor(.gray)
+            }
+            .padding()
+            
+            EmailPassView(signingUp: $signingUp)
+            HStack {
+                Text("Already have an account?")
+                Button("Sign In" ) {
+                    signingUp.toggle()
+                }
+            }
+            
+        }
     }
 }
 
 #Preview {
-    SignUpView()
+    SignUpView(signingUp: .constant(true))
 }

@@ -10,7 +10,7 @@ import SwiftUI
 struct EmailPassView: View {
     
     @StateObject private var appController = AppController()
-    @Binding var signingIn: Bool
+    @Binding var signingUp: Bool
     
     
     var body: some View {
@@ -43,10 +43,10 @@ struct EmailPassView: View {
                 
                 
                 //Depending on what view signIn / signUp buttoon
-                Button(action: signUp) {
-                    Text("Sign In")
-                        .frame(maxWidth: .infinity)
+                Button(signingUp ? "Sign Up" : "Sign In") {
+                    signingUp ? signUp() : signIn()
                 }
+                .frame(maxWidth: .infinity)
                 .buttonStyle(.borderedProminent)
                 
             }
@@ -55,6 +55,16 @@ struct EmailPassView: View {
             
         }
         .frame(height: 200)
+    }
+    
+    func signIn() {
+        Task {
+            do {
+                try await appController.signUp()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
     
     func signUp() {
@@ -68,6 +78,8 @@ struct EmailPassView: View {
     }
 }
 
+    
+
 #Preview {
-    EmailPassView()
+    EmailPassView(signingUp: .constant(true))
 }

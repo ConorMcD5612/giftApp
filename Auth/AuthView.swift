@@ -14,7 +14,7 @@ struct AuthView: View {
     
     let paddingAmount: CGFloat = 20
     @StateObject private var appController = AppController()
-    @State private var signingIn = false
+    @State private var signingUp = false
     
     var body: some View {
         VStack {
@@ -49,7 +49,7 @@ struct AuthView: View {
                 }
                 .padding()
                 
-                EmailPassView(signingIn: $signingIn)
+                EmailPassView(signingUp: $signingUp)
                 
             }
             
@@ -57,7 +57,8 @@ struct AuthView: View {
             HStack {
                 Text("Don't have an account?")
                 Button("Sign Up") {
-                    //This will switch views 
+                    //This will switch views
+                    signingUp.toggle()
                 }
             }
             .padding()
@@ -66,15 +67,7 @@ struct AuthView: View {
     
    
     
-    func signIn() {
-        Task {
-            do {
-                try await appController.signUp()
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
+ 
     
     
     func GSignIn() {
