@@ -22,7 +22,7 @@ struct SignUpView: View {
             EmailPassView(signingUp: $signingUp)
             HStack {
                 Text("Already have an account?")
-                Button("Sign In" ) {
+                Button("Sign In") {
                     signingUp.toggle()
                 }
             }

@@ -9,6 +9,7 @@ import SwiftUI
 import FirebaseAuth
 import FirebaseCore
 import GoogleSignIn
+import Firebase
 
 
 class AppController: ObservableObject {
@@ -34,11 +35,27 @@ class AppController: ObservableObject {
         try await Auth.auth().signIn(with: credential)
     }
     func signIn() async throws{
+        
         try await Auth.auth().signIn(withEmail: username, password: password)
+      
+        
     }
     
-    func signUp() async throws {
+    func signUp(name: String, email: String, birthday: Date) async throws {
         try await Auth.auth().createUser(withEmail: username, password: password)
+        let db = Firestore.firestore()
+       
+        
+        
+        guard let UID = Auth.auth().currentUser?.uid else {return}
+        
+        //create new user document
+        try await db.collection("users").document(UID).setData([
+            "name": name,
+            "email": email,
+            "birthday": birthday
+        ])
+            
     }
     
     func signOut() throws {

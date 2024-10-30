@@ -41,13 +41,13 @@ struct EmailPassView: View {
                 }
                 
                 
-                
                 //Depending on what view signIn / signUp buttoon
-                Button(signingUp ? "Sign Up" : "Sign In") {
-                    signingUp ? signUp() : signIn()
+                Button(action: {signingUp ? signUp() : signIn() }) {
+                    Text(signingUp ? "Sign Up" : "Sign In")
+                        .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
                 .buttonStyle(.borderedProminent)
+                
                 
             }
             .padding(30)
@@ -60,7 +60,7 @@ struct EmailPassView: View {
     func signIn() {
         Task {
             do {
-                try await appController.signUp()
+                try await appController.signIn()
             } catch {
                 print(error.localizedDescription)
             }
@@ -70,7 +70,7 @@ struct EmailPassView: View {
     func signUp() {
         Task {
             do {
-                try await appController.signUp()
+                try await appController.signUp(name: "test", email: "test", birthday: Date())
             } catch {
                 print(error.localizedDescription)
             }
