@@ -16,6 +16,8 @@ class AppController: ObservableObject {
     //username will just be email for now
     var username: String = ""
     var password: String = ""
+    var isLoggedIn: Bool = false;
+    @Published var userViewModel: UserViewModel?;
     
     
     func GSignIn() async throws{
@@ -33,35 +35,50 @@ class AppController: ObservableObject {
         let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: acessToken)
         
         try await Auth.auth().signIn(with: credential)
-    }
-    func signIn() async throws{
-        
-        try await Auth.auth().signIn(withEmail: username, password: password)
-      
         
     }
     
-    func signUp(first: String, last: String, email: String, birthday: Date) async throws {
+    func signIn() async throws{
+        try await Auth.auth().signIn(withEmail: username, password: password)
+        try await initUserData()
+        print("User's first name: \(self.userViewModel?.user?.firstName ?? "No name")")
+        print("User's last name: \(self.userViewModel?.user?.lastName ?? "No name")")
+    }
+    
+    func signUp(first: String, last: String, email: String, password: String, birthday: Date) async throws {
+        //TODO: Make a struct for signUpInfo and pass that
         try await Auth.auth().createUser(withEmail: email, password: password)
+        
+        //signIn before adding to db for db rules
+        try await Auth.auth().signIn(withEmail: email, password: password)
+        
         let db = Firestore.firestore()
-       
-        
-        
         guard let UID = Auth.auth().currentUser?.uid else {return}
         
         //create new user document
         try await db.collection("users").document(UID).setData([
-            "firstName": first,
-            "lastName": last,
-            "email": email,
-            "birthday": birthday
+           
+              "firstName": first,
+              "lastName": last,
+              "email": email,
+              "birthday": birthday,
+              "wishlist": [],
+              "preferences": []
         ])
-            
+        
     }
     
     func signOut() throws {
         try Auth.auth().signOut()
+        
     }
     
+    //call this after signing in
+    func initUserData() async throws {
+        
+            self.userViewModel = UserViewModel()
+            try await self.userViewModel?.fetchUserData()
+        
+    }
 }
 

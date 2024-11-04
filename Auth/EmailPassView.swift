@@ -103,7 +103,7 @@ struct EmailPassView: View {
     func signUp() {
         Task {
             do {
-                try await appController.signUp(first: firstName, last: lastName, email: appController.username, birthday: birthday)
+                try await appController.signUp(first: firstName, last: lastName, email: appController.username, password: appController.password, birthday: birthday)
             } catch {
                 print(error.localizedDescription)
             }
