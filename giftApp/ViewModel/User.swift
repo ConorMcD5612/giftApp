@@ -8,7 +8,8 @@
 import Foundation
 
 class User {
-    var name: String;
+    var firstName: String;
+    var lastName: String;
     var userUID: String;
     var email: String;
     var birthday: Date;
@@ -17,11 +18,11 @@ class User {
     var prefrences: [String]?;
     
     
-    init(name: String, email: String, birthday: Date, userUID: String) {
-        self.name = name;
+    init(firstName: String, lastName: String, email: String, birthday: Date, userUID: String) {
+        self.firstName = firstName;
+        self.lastName = lastName;
         self.email = email;
         self.birthday = birthday;
         self.userUID = userUID;
     }
-    
 }

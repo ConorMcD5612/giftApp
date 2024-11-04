@@ -22,6 +22,5 @@ class UserViewModel: ObservableObject {
     
     init() {
         self.user = nil;
-        
     }
 }

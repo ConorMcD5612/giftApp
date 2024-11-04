@@ -9,8 +9,9 @@ import SwiftUI
 
 struct SignUpView: View {
     @Binding var signingUp: Bool
+    
     var body: some View {
-        VStack(spacing: 15) {
+        VStack(spacing: 100) {
             VStack {
                 Text("Sign Up")
                     .font(.largeTitle)
@@ -19,7 +20,9 @@ struct SignUpView: View {
             }
             .padding()
             
+            
             EmailPassView(signingUp: $signingUp)
+            
             HStack {
                 Text("Already have an account?")
                 Button("Sign In") {

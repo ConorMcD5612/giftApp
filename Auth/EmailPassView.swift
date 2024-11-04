@@ -12,6 +12,14 @@ struct EmailPassView: View {
     @StateObject private var appController = AppController()
     @Binding var signingUp: Bool
     
+    @StateObject var userViewModel = UserViewModel()
+    @State var birthday: Date = Date()
+    @State var firstName: String = ""
+    @State var lastName: String = ""
+    
+   
+    
+    
     
     var body: some View {
         ZStack {
@@ -29,17 +37,42 @@ struct EmailPassView: View {
                 
                 
             VStack(alignment: .leading, spacing: 15) {
+                if(signingUp){
+                    VStack(alignment: .leading, spacing: 5) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("First")
+                                TextField("", text: $firstName)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("Last")
+                                TextField("", text: $lastName)
+                            }
+                        }
+                    }
+                    
+                }
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Username")
                     TextField("", text: $appController.username)
                 }
-              
+                
+                
+                
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Password")
                     SecureField("", text: $appController.password)
                 }
-                
+                if(signingUp) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Birthday")
+                        DatePicker("",selection: $birthday, displayedComponents: [.date])
+                            .labelsHidden()
+                    }
+                    
+                }
                 
                 //Depending on what view signIn / signUp buttoon
                 Button(action: {signingUp ? signUp() : signIn() }) {
@@ -70,7 +103,7 @@ struct EmailPassView: View {
     func signUp() {
         Task {
             do {
-                try await appController.signUp(name: "test", email: "test", birthday: Date())
+                try await appController.signUp(first: firstName, last: lastName, email: appController.username, birthday: birthday)
             } catch {
                 print(error.localizedDescription)
             }

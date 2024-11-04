@@ -41,8 +41,8 @@ class AppController: ObservableObject {
         
     }
     
-    func signUp(name: String, email: String, birthday: Date) async throws {
-        try await Auth.auth().createUser(withEmail: username, password: password)
+    func signUp(first: String, last: String, email: String, birthday: Date) async throws {
+        try await Auth.auth().createUser(withEmail: email, password: password)
         let db = Firestore.firestore()
        
         
@@ -51,7 +51,8 @@ class AppController: ObservableObject {
         
         //create new user document
         try await db.collection("users").document(UID).setData([
-            "name": name,
+            "firstName": first,
+            "lastName": last,
             "email": email,
             "birthday": birthday
         ])
