@@ -9,12 +9,8 @@ import SwiftUI
 
 
 struct AuthView: View {
-    
-    
-    let paddingAmount: CGFloat = 20
-    
     @State private var signingUp = false
-    @State private var showProfile = false
+    
     
     var body: some View {
         VStack {
@@ -24,11 +20,6 @@ struct AuthView: View {
                 } else {
                     LogInView(signingUp: $signingUp)
                 }
-            
-                ProfileView()
-                Text("Hello")
-            
-          
         }
     }
     

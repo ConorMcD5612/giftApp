@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		B00596662CB1EFA600F74C36 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B00596652CB1EF9C00F74C36 /* .gitignore */; };
 		B005966A2CB1F0E100F74C36 /* .env in Resources */ = {isa = PBXBuildFile; fileRef = B00596692CB1F0DC00F74C36 /* .env */; };
+		B00673B42CD9A9100071EF03 /* AppController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00673AE2CD9A9100071EF03 /* AppController.swift */; };
+		B00673B52CD9A9100071EF03 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00673AF2CD9A9100071EF03 /* AppDelegate.swift */; };
 		B04840F42CB1CDCF0037110A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B04840F32CB1CDCF0037110A /* FirebaseAuth */; };
 		B04840F62CB1CDCF0037110A /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B04840F52CB1CDCF0037110A /* FirebaseCore */; };
 		B04840F82CB1CDCF0037110A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B04840F72CB1CDCF0037110A /* FirebaseFirestore */; };
@@ -39,6 +41,8 @@
 /* Begin PBXFileReference section */
 		B00596652CB1EF9C00F74C36 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B00596692CB1F0DC00F74C36 /* .env */ = {isa = PBXFileReference; lastKnownFileType = text; path = .env; sourceTree = "<group>"; };
+		B00673AE2CD9A9100071EF03 /* AppController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppController.swift; sourceTree = "<group>"; };
+		B00673AF2CD9A9100071EF03 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B04840C52CB1CBB40037110A /* giftApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = giftApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B04840D52CB1CBB60037110A /* giftAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = giftAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B04840DF2CB1CBB60037110A /* giftAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = giftAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -140,6 +144,8 @@
 				B04840E22CB1CBB60037110A /* giftAppUITests */,
 				B04840C62CB1CBB40037110A /* Products */,
 				B0A602712CBC7DAE00EA9780 /* GoogleService-Info.plist */,
+				B00673AF2CD9A9100071EF03 /* AppDelegate.swift */,
+				B00673AE2CD9A9100071EF03 /* AppController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -312,6 +318,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B00673B42CD9A9100071EF03 /* AppController.swift in Sources */,
+				B00673B52CD9A9100071EF03 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

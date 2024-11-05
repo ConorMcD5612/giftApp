@@ -33,6 +33,7 @@ class AppController: ObservableObject {
         let acessToken = result.user.accessToken.tokenString
         let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: acessToken)
         
+        let googleUserData = result.user
         try await Auth.auth().signIn(with: credential)
         
     }
@@ -81,7 +82,6 @@ class AppController: ObservableObject {
         
         DispatchQueue.main.async {
             self.userViewModel = userViewModel
-            print("AppController userViewModel updated:", self.userViewModel?.user?.firstName ?? "No Name")
         }
     }
 }

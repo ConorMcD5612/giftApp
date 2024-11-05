@@ -12,6 +12,12 @@ struct ProfileMainView: View {
     
     var body: some View {
         VStack {
+            Image(systemName: "person")
+                .clipShape(Circle())
+                .overlay {
+                    Circle().stroke(.black, lineWidth: 4)
+                }
+                .shadow(radius: 5)
             Text(appController.userViewModel?.user?.firstName ?? "")
         }
     }		
