@@ -14,14 +14,21 @@ struct AuthView: View {
     let paddingAmount: CGFloat = 20
     
     @State private var signingUp = false
+    @State private var showProfile = false
     
     var body: some View {
         VStack {
-            if signingUp {
-                SignUpView(signingUp: $signingUp)
-            } else {
-                LogInView(signingUp: $signingUp)
-            }
+            
+                if signingUp {
+                    SignUpView(signingUp: $signingUp)
+                } else {
+                    LogInView(signingUp: $signingUp)
+                }
+            
+                ProfileView()
+                Text("Hello")
+            
+          
         }
     }
     

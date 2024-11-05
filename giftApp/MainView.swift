@@ -25,6 +25,11 @@ struct MainView: View {
                     Image(systemName: "calendar")
                     Text("Calendar")
                 }
+            ProfileView()
+                .tabItem {
+                    Image(systemName: "person.crop.circle")
+                    Text("Profile")
+                }
         }
     }
 }

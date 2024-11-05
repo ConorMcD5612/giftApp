@@ -50,7 +50,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ViewModel/User.swift,
-				ViewModel/UserActions.swift,
 				ViewModel/UserViewModel.swift,
 			);
 			target = B04840D42CB1CBB60037110A /* giftAppTests */;
@@ -59,7 +58,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ViewModel/User.swift,
-				ViewModel/UserActions.swift,
 				ViewModel/UserViewModel.swift,
 			);
 			target = B04840DE2CB1CBB60037110A /* giftAppUITests */;

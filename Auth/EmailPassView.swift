@@ -9,10 +9,9 @@ import SwiftUI
 
 struct EmailPassView: View {
     
-    @StateObject private var appController = AppController()
+    @EnvironmentObject private var appController: AppController
     @Binding var signingUp: Bool
     
-    @StateObject var userViewModel = UserViewModel()
     @State var birthday: Date = Date()
     @State var firstName: String = ""
     @State var lastName: String = ""

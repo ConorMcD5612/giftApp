@@ -13,14 +13,13 @@ import Firebase
 
 
 class AppController: ObservableObject {
+    @Published var userViewModel: UserViewModel?;
     //username will just be email for now
     var username: String = ""
     var password: String = ""
-    var isLoggedIn: Bool = false;
-    @Published var userViewModel: UserViewModel?;
-    
     
     func GSignIn() async throws{
+        //TODO: init userViewModel for google signIn 
         guard let windowScene = await UIApplication.shared.connectedScenes.first as? UIWindowScene else { return  }
         guard let rootViewController = await windowScene.windows.first?.rootViewController else { return }
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
@@ -41,8 +40,6 @@ class AppController: ObservableObject {
     func signIn() async throws{
         try await Auth.auth().signIn(withEmail: username, password: password)
         try await initUserData()
-        print("User's first name: \(self.userViewModel?.user?.firstName ?? "No name")")
-        print("User's last name: \(self.userViewModel?.user?.lastName ?? "No name")")
     }
     
     func signUp(first: String, last: String, email: String, password: String, birthday: Date) async throws {
@@ -57,7 +54,6 @@ class AppController: ObservableObject {
         
         //create new user document
         try await db.collection("users").document(UID).setData([
-           
               "firstName": first,
               "lastName": last,
               "email": email,
@@ -65,20 +61,28 @@ class AppController: ObservableObject {
               "wishlist": [],
               "preferences": []
         ])
-        
+       try await initUserData()
+       
     }
     
     func signOut() throws {
         try Auth.auth().signOut()
-        
     }
     
     //call this after signing in
     func initUserData() async throws {
+        let userViewModel = UserViewModel()
         
-            self.userViewModel = UserViewModel()
-            try await self.userViewModel?.fetchUserData()
+        do {
+            try await userViewModel.fetchUserData()
+        } catch {
+            print("initUserData failed")
+        }
         
+        DispatchQueue.main.async {
+            self.userViewModel = userViewModel
+            print("AppController userViewModel updated:", self.userViewModel?.user?.firstName ?? "No Name")
+        }
     }
 }
 
