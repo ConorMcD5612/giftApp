@@ -43,6 +43,10 @@ struct MainView: View {
                 AuthView()
             }
         }.onAppear {
+            Task {
+                try await appController.initUserData()
+            }
+            
             Auth.auth().addStateDidChangeListener {auth, user in
                 signedIn = user != nil ? true : false
             }

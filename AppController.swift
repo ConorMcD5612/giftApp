@@ -21,7 +21,6 @@ class AppController: ObservableObject {
     
     
     func GSignIn() async throws{
-        //TODO: init userViewModel for google signIn
         do {
             guard let windowScene = await UIApplication.shared.connectedScenes.first as? UIWindowScene else { return  }
             guard let rootViewController = await windowScene.windows.first?.rootViewController else { return }
@@ -60,11 +59,7 @@ class AppController: ObservableObject {
                     "wishlist": [],
                     "preferences": []
                 ])
-                print("WORKS")
             }
-            
-            
-            try await initUserData()
             print("Gsignin worked")
         } catch {
             print("Gsignin did not work")
@@ -78,7 +73,6 @@ class AppController: ObservableObject {
     
     func signIn() async throws{
         try await Auth.auth().signIn(withEmail: username, password: password)
-        try await initUserData()
     }
     
     func signUp(first: String, last: String, email: String, password: String, birthday: Date) async throws {
@@ -100,7 +94,7 @@ class AppController: ObservableObject {
               "wishlist": [],
               "preferences": []
         ])
-       try await initUserData()
+      
        
     }
     
