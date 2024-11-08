@@ -14,28 +14,66 @@ import Firebase
 
 class AppController: ObservableObject {
     @Published var userViewModel: UserViewModel?;
+    
     //username will just be email for now
     var username: String = ""
     var password: String = ""
     
+    
     func GSignIn() async throws{
-        //TODO: init userViewModel for google signIn 
-        guard let windowScene = await UIApplication.shared.connectedScenes.first as? UIWindowScene else { return  }
-        guard let rootViewController = await windowScene.windows.first?.rootViewController else { return }
-        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-        
-        // Create Google Sign In configuration object.
-        let config = GIDConfiguration(clientID: clientID)
-        GIDSignIn.sharedInstance.configuration = config
-        let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
-        
-        guard let idToken = result.user.idToken?.tokenString else { return }
-        let acessToken = result.user.accessToken.tokenString
-        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: acessToken)
-        
-        let googleUserData = result.user
-        try await Auth.auth().signIn(with: credential)
-        
+        //TODO: init userViewModel for google signIn
+        do {
+            guard let windowScene = await UIApplication.shared.connectedScenes.first as? UIWindowScene else { return  }
+            guard let rootViewController = await windowScene.windows.first?.rootViewController else { return }
+            guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+            
+            // Create Google Sign In configuration object.
+            let config = GIDConfiguration(clientID: clientID)
+            GIDSignIn.sharedInstance.configuration = config
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
+            
+            guard let idToken = result.user.idToken?.tokenString else { return }
+            let acessToken = result.user.accessToken.tokenString
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: acessToken)
+            
+            let googleUserData = result.user.profile
+            print("\(googleUserData?.name ?? "Name doesn't work")")
+            
+            //need to sign in first for auth rules
+            try await Auth.auth().signIn(with: credential)
+            
+            
+            //put gUserData in firestore
+            let db = Firestore.firestore()
+            guard let UID = Auth.auth().currentUser?.uid else {return}
+            let query = db.collection("users").document(UID)
+            
+            
+            let document = try await query.getDocument()
+            
+            if !document.exists {
+                try await db.collection("users").document(UID).setData([
+                    "firstName": googleUserData?.givenName ?? "",
+                    "lastName": googleUserData?.familyName ?? "",
+                    "email": googleUserData?.email ?? "",
+                    "birthday": Timestamp(seconds: 0, nanoseconds: 0),
+                    "wishlist": [],
+                    "preferences": []
+                ])
+                print("WORKS")
+            }
+            
+            
+            try await initUserData()
+            print("Gsignin worked")
+        } catch {
+            print("Gsignin did not work")
+        }
+    }
+    
+    func GSignOut() throws {
+        GIDSignIn.sharedInstance.signOut()
+        try Auth.auth().signOut()
     }
     
     func signIn() async throws{

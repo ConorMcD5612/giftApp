@@ -28,6 +28,7 @@ class UserViewModel: ObservableObject {
             let document = try await query.getDocument()
             if let userData = try? document.data(as: User.self) {
                 self.user = userData
+                print("User data set \(self.user?.firstName ?? "name not found")")
             } else {
                 print("userDocument does not exist/ does not match")
             }

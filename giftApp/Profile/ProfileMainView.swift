@@ -13,14 +13,29 @@ struct ProfileMainView: View {
     var body: some View {
         VStack {
             Image(systemName: "person")
+                .font(.title)
                 .clipShape(Circle())
                 .overlay {
                     Circle().stroke(.black, lineWidth: 4)
                 }
                 .shadow(radius: 5)
+            Button("Sign out") {
+                GSignOut()
+            }
             Text(appController.userViewModel?.user?.firstName ?? "")
         }
-    }		
+    }
+    
+    func GSignOut() {
+        Task {
+            do {
+                try appController.GSignOut()
+                print("GSignOut successful")
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
         
 }
    		

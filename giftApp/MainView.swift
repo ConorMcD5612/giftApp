@@ -6,38 +6,47 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct MainView: View {
     @EnvironmentObject var appController: AppController
+    @State var signedIn = (Auth.auth().currentUser != nil)
     
     var body: some View {
-        if appController.userViewModel?.user != nil {
-            TabView {
-                PeopleView()
-                    .tabItem {
-                        Image(systemName: "person")
-                        Text("People")
-                    }
-                GroupsMainView()
-                    .tabItem {
-                        Image(systemName: "person.2")
-                        Text("Groups")
-                    }
-                CalendarMainView()
-                    .tabItem {
-                        Image(systemName: "calendar")
-                        Text("Calendar")
-                    }
-                ProfileMainView()
-                    .tabItem {
-                        Image(systemName: "person.crop.circle")
-                        Text("Profile")
-                    }
+        VStack {
+            
+            
+            if signedIn {
+                TabView {
+                    PeopleView()
+                        .tabItem {
+                            Image(systemName: "person")
+                            Text("People")
+                        }
+                    GroupsMainView()
+                        .tabItem {
+                            Image(systemName: "person.2")
+                            Text("Groups")
+                        }
+                    CalendarMainView()
+                        .tabItem {
+                            Image(systemName: "calendar")
+                            Text("Calendar")
+                        }
+                    ProfileMainView()
+                        .tabItem {
+                            Image(systemName: "person.crop.circle")
+                            Text("Profile")
+                        }
+                }
+            } else {
+                AuthView()
             }
-        } else {
-            AuthView()
+        }.onAppear {
+            Auth.auth().addStateDidChangeListener {auth, user in
+                signedIn = user != nil ? true : false
+            }
         }
-        
     }
 }
 

@@ -12,6 +12,7 @@ struct LogInView: View {
     @StateObject private var appController = AppController()
     @Binding var signingUp: Bool
     
+    
     var body: some View {
         VStack(spacing: 10) {
             
@@ -60,6 +61,7 @@ struct LogInView: View {
         Task {
             do {
                 try await appController.GSignIn()
+                signingUp.toggle()
             } catch {
                 print(error.localizedDescription)
             }
