@@ -10,6 +10,7 @@ import FirebaseAuth
 
 struct MainView: View {
     @EnvironmentObject var appController: AppController
+    @StateObject var calendarViewModel: CalendarViewModel = CalendarViewModel()
     @State var signedIn = (Auth.auth().currentUser != nil)
     
     var body: some View {
@@ -29,10 +30,12 @@ struct MainView: View {
                             Text("Groups")
                         }
                     CalendarMainView()
+                        .environmentObject(calendarViewModel)
                         .tabItem {
                             Image(systemName: "calendar")
                             Text("Calendar")
                         }
+                        
                     ProfileMainView()
                         .tabItem {
                             Image(systemName: "person.crop.circle")

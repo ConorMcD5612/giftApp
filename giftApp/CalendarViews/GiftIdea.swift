@@ -8,14 +8,20 @@
 import Foundation
 
 struct GiftIdea: Decodable {
-    let recipName: String
-    let date: Date
-    let giftName: String
+    var recipName: String
+    var date: Date
+    var giftName: String
     
     
     init(recipName: String, date: Date, giftName: String) {
         self.recipName = recipName
         self.date = date
         self.giftName = giftName
+    }
+    
+    init() {
+        self.recipName = ""
+        self.date = Date()
+        self.giftName = ""
     }
 }

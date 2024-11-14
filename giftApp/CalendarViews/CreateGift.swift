@@ -9,7 +9,18 @@ import SwiftUI
 
 struct CreateGift: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            RoundedRectangle(cornerRadius: 7)
+                .fill(.white)
+                .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                .frame(width: .infinity, height: 50)
+            
+            Image(systemName: "plus.circle")
+                .font(.system(size: 30))
+        }
+        .padding()
+        
+        
     }
 }
 
