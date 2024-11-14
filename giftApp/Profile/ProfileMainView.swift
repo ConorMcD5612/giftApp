@@ -23,6 +23,9 @@ struct ProfileMainView: View {
                 GSignOut()
             }
             Text(appController.userViewModel?.user?.firstName ?? "")
+            Text(appController.userViewModel?.user?.lastName ?? "")
+            
+            
         }
     }
     

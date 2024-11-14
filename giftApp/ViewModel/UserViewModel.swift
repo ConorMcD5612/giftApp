@@ -27,6 +27,7 @@ class UserViewModel: ObservableObject {
         do {
             let document = try await query.getDocument()
             if let userData = try? document.data(as: User.self) {
+                //going to have to change this to not 1:1 matching db doc
                 self.user = userData
                 print("User data set \(self.user?.firstName ?? "name not found")")
             } else {
