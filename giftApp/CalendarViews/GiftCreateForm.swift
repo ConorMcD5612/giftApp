@@ -9,15 +9,42 @@ import SwiftUI
 
 struct GiftCreateForm: View {
     @EnvironmentObject private var calendarViewModel: CalendarViewModel
+    
+    @Binding var creatingGift: Bool
     var body: some View {
+        
         HStack {
-            DatePicker("Date", selection: $calendarViewModel.newGift.date)
-            TextField("Recipent: ", text: $calendarViewModel.newGift.recipName)
-            TextField("Gift: ", text: $calendarViewModel.newGift.giftName)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Date:")
+               
+                    DatePicker("Date", selection: $calendarViewModel.newGift.date, displayedComponents: [.date])
+                        .labelsHidden()
+                
+                   
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Recipient:")
+                TextField("", text: $calendarViewModel.newGift.recipName)
+                    .border(Color.black, width: 1)
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Gift:")
+                TextField("", text: $calendarViewModel.newGift.giftName)
+                    .border(Color.black, width: 1)
+            }
         }
+        .padding()
+        .overlay {
+            RoundedRectangle(cornerRadius: 5)
+                .stroke(Color.black)
+        }
+        .padding()
     }
 }
 
 #Preview {
-    GiftCreateForm()
+    GiftCreateForm(creatingGift: .constant(true))
+        .environmentObject(CalendarViewModel())
 }

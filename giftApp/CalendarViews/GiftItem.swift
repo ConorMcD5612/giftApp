@@ -15,6 +15,7 @@ struct GiftItem: View {
         let day = Calendar.current.dateComponents([.day], from: timestamp).day
         return day != nil ? "\(day!)" : ""
     }
+    
     var body: some View {
         HStack(alignment: .center) {
             
