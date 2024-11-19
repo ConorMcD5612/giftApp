@@ -16,11 +16,8 @@ struct GiftCreateForm: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Date:")
-               
-                    DatePicker("Date", selection: $calendarViewModel.newGift.date, displayedComponents: [.date])
-                        .labelsHidden()
-                
-                   
+                DatePicker("Date", selection: $calendarViewModel.newGift.date, displayedComponents: [.date])
+                    .labelsHidden()
             }
             
             VStack(alignment: .leading, spacing: 2) {
@@ -46,5 +43,4 @@ struct GiftCreateForm: View {
 
 #Preview {
     GiftCreateForm(creatingGift: .constant(true))
-        .environmentObject(CalendarViewModel())
 }

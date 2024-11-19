@@ -20,19 +20,23 @@ struct CalendarMainView: View {
             }
             .datePickerStyle(.graphical)
             
-            //TODO: Divider component 
             Divider()
-                .frame(width: 2)
+                .frame(height: 1)
                 .overlay(Color.black)
-           	 
-            GiftItem(gift: GiftIdea(recipName: "brian jefferson", date: Date(), giftName: "gift card"))
+                .padding(.vertical, 10)
             
+            VStack(spacing: 10) {
+                GiftItem(gift: GiftIdea(recipName: "brian jefferson", date: Date(), giftName: "gift card"))
+                GiftItem(gift: GiftIdea(recipName: "brian jefferson", date: Date(), giftName: "gift card"))
+                CreateGift()
+            }
+            
+            Spacer()
         }
-        
     }
-
 }
 
 #Preview {
     CalendarMainView()
+        .environmentObject(CalendarViewModel())
 }

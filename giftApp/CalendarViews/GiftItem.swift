@@ -48,18 +48,14 @@ struct GiftItem: View {
                 Text(gift.giftName)
                     .font(.system(size: 24))
             }
-            
-            
         }
-        
         .frame(maxWidth: .infinity)
-        
         .overlay {
             RoundedRectangle(cornerRadius: 5)
                 .stroke(.black)
         }
         .fixedSize(horizontal: false, vertical: true)
-        .padding()
+        .padding(.horizontal, 10)
     }
 }
 
