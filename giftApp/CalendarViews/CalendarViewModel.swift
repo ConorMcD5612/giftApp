@@ -21,6 +21,7 @@ class CalendarViewModel: ObservableObject {
     
     //getting all giftIdeas for currentDay and all giftIdeas > currentDay
     
+    
     //giftIdeas for the currentDate
     
     
@@ -47,8 +48,8 @@ class CalendarViewModel: ObservableObject {
         ]
         
         do {
-            //write timestamp field based on calendar date selected
-            //map->array->map (giftIdeas)
+            //write timestamp field based on date selected
+            //DateswithGifts->array->giftIdea (
             try await query.setData([
                 "datesWithGifts": [
                     timeStampString: FieldValue.arrayUnion([

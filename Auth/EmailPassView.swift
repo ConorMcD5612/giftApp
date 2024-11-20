@@ -16,9 +16,6 @@ struct EmailPassView: View {
     @State var firstName: String = ""
     @State var lastName: String = ""
     
-   
-    
-    
     
     var body: some View {
         ZStack {
@@ -42,11 +39,13 @@ struct EmailPassView: View {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("First")
                                 TextField("", text: $firstName)
+                                    .autocapitalization(.none)
                             }
                             
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("Last")
                                 TextField("", text: $lastName)
+                                    .autocapitalization(.none)
                             }
                         }
                     }
@@ -56,6 +55,7 @@ struct EmailPassView: View {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Username")
                     TextField("", text: $appController.username)
+                        .autocapitalization(.none)
                 }
                 
                 
@@ -63,6 +63,7 @@ struct EmailPassView: View {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Password")
                     SecureField("", text: $appController.password)
+                        .autocapitalization(.none)
                 }
                 if(signingUp) {
                     VStack(alignment: .leading, spacing: 5) {
@@ -79,7 +80,6 @@ struct EmailPassView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                
                 
             }
             .padding(30)

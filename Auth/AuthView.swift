@@ -14,7 +14,6 @@ struct AuthView: View {
     
     var body: some View {
         VStack {
-            
                 if signingUp {
                     SignUpView(signingUp: $signingUp)
                 } else {

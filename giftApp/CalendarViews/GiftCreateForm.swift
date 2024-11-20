@@ -36,12 +36,14 @@ struct GiftCreateForm: View {
                     Text("Recipient:")
                     TextField("", text: $calendarViewModel.newGift.recipName)
                         .border(Color.black, width: 1)
+                        .autocapitalization(.none)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Gift:")
                     TextField("", text: $calendarViewModel.newGift.giftName)
                         .border(Color.black, width: 1)
+                        .autocapitalization(.none)
                 }
             }
             .padding()
