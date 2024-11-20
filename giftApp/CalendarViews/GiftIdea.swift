@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GiftIdea: Decodable {
+struct GiftIdea: Codable {
     var recipName: String
     var date: Date
     var giftName: String

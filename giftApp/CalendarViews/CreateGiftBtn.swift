@@ -9,12 +9,9 @@ import SwiftUI
 
 struct CreateGiftBtn: View {
     @Binding var creatingGift: Bool
-    func submitGiftForm() {
-        creatingGift.toggle()
-    }
-    
+ 
     var body: some View {
-            Button(action: submitGiftForm) {
+        Button(action: {creatingGift.toggle()}) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 7)
                         .fill(.white)
