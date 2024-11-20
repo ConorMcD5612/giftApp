@@ -23,6 +23,14 @@ class CalendarViewModel: ObservableObject {
     
     //giftIdeas for the currentDate
     
+    
+    func DDMMYYFormat(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        let rtnString = formatter.string(from: date)
+        return rtnString
+    }
+    
     func writeGiftIdea() async throws{
         let db = Firestore.firestore()
         guard let UID = Auth.auth().currentUser?.uid else {
@@ -30,14 +38,22 @@ class CalendarViewModel: ObservableObject {
             return
         }
         let query = db.collection("users").document(UID)
+        let timeStampString = DDMMYYFormat(date: self.newGift.date)
         
+        let giftData: [String: Any] = [
+            "recipName": self.newGift.recipName,
+            "date": self.newGift.date,
+            "giftName": self.newGift.giftName
+        ]
         
         do {
             //write timestamp field based on calendar date selected
             //map->array->map (giftIdeas)
             try await query.setData([
-                "datesWithGifts:": [
-                    Timestamp(date: self.newGift.date): FieldValue.arrayUnion([self.newGift])
+                "datesWithGifts": [
+                    timeStampString: FieldValue.arrayUnion([
+                       giftData
+                    ])
                 ]
             ], merge: true)
         } catch {
