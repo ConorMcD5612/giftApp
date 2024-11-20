@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct CalendarMainView: View {
-    @State var date: Date = Date()
+    
+    @EnvironmentObject private var calendarViewModel: CalendarViewModel
     
     var body: some View {
         VStack {
             DatePicker(
-                selection: $date,
+                selection: $calendarViewModel.selectedDateCal,
                 displayedComponents: [.date]
             ) {
                 
@@ -26,12 +27,23 @@ struct CalendarMainView: View {
                 .padding(.vertical, 10)
             
             VStack(spacing: 10) {
-                GiftItem(gift: GiftIdea(recipName: "brian jefferson", date: Date(), giftName: "gift card"))
-                GiftItem(gift: GiftIdea(recipName: "brian jefferson", date: Date(), giftName: "gift card"))
+                List(calendarViewModel.giftsDisplayed) { giftIdea in
+                    GiftItem(gift: giftIdea)
+                }
+                
                 CreateGift()
             }
             
             Spacer()
+        }
+        .onChange(of: calendarViewModel.selectedDateCal) {
+            Task {
+                do {
+                    try await calendarViewModel.getGiftIdeasCurrent()
+                } catch {
+                    print("getGiftIdeasCurrent failed in onChange")
+                }
+            }
         }
     }
 }

@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct GiftIdea: Codable {
+
+struct GiftIdea: Codable, Identifiable {
+    var id = UUID()
     var recipName: String
     var date: Date
     var giftName: String
@@ -23,5 +25,6 @@ struct GiftIdea: Codable {
         self.recipName = ""
         self.date = Date()
         self.giftName = ""
+        
     }
 }
