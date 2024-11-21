@@ -27,3 +27,4 @@ struct SearchField: View {
         ).frame(height: 15)
     }
 }
+

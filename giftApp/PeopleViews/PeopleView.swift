@@ -8,32 +8,56 @@
 import SwiftUI
 
 struct PeopleView: View {
-    static var FIELD_CHAR_LIMIT: Int = 32
-    
     @State var searchEntry: String = ""
     
+    @State var selectedPerson: String = ""
+    
+    @State var people: [Person] = []
+    
+    @State var confirmation: Bool = false
+    
+    // Conditions
+    @State var personSelected: Bool = false
+    @State var addingPerson: Bool = false
+    
     var body: some View {
-        VStack {
-            HStack {
-                Text("People")
-                Spacer()
-                Button("+", action: {})
-            }.font(.largeTitle)
-                .padding([.leading, .trailing])
-            SearchField(searchEntry: $searchEntry)
-                .padding([.leading, .trailing])
-            ScrollView(showsIndicators: false) {
-                VStack {
-                    IconButton(text: "Dave")
-                    IconButton(text: "John")
-                    IconButton(text: "Sarah")
-                    IconButton(text: "Jason")
-                    IconButton(text: "Michael")
-                    IconButton(text: "Jordan")
-                    IconButton(text: "Keller")
-                }
-            }.scrollBounceBehavior(.basedOnSize)
-            .padding([.top, .bottom])
+        NavigationStack {
+            VStack {
+                // People title and add person button
+                HStack {
+                    Text("People")
+                    Spacer()
+                    Button("+") {
+                        addingPerson = true
+                    }
+                }.font(.largeTitle)
+                    .padding([.leading, .trailing])
+                
+                // Search bar
+                SearchField(searchEntry: $searchEntry)
+                    .padding([.leading, .trailing])
+                
+                ScrollView(showsIndicators: false) {
+                    if (people.count > 0) {
+                        VStack {
+                            ForEach(people) {person in
+                                IconButton(text: person.name) {
+                                    selectedPerson = person.name
+                                    personSelected = true
+                                }
+                            }
+                        }
+                    } else {
+                        Text("You haven't added any people yet!")
+                            .font(.system(size: 20))
+                    }
+                }.scrollBounceBehavior(.basedOnSize)
+                .padding([.top, .bottom])
+                
+            }
+            .navigationDestination(isPresented: $addingPerson) {
+                AddPeopleView(addPerson: $addingPerson, people: $people)
+            }
         }
     }
 }
