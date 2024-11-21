@@ -54,7 +54,9 @@ class CalendarViewModel: ObservableObject {
                 }
                 print(self.giftsDisplayed)
             } else {
-                self.giftsDisplayed = []
+                DispatchQueue.main.async {
+                    self.giftsDisplayed = []
+                }
                 print("no giftIdeas for this date")
             }
         } catch {
