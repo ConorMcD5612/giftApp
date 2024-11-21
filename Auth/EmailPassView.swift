@@ -49,7 +49,6 @@ struct EmailPassView: View {
                             }
                         }
                     }
-                    
                 }
                 
                 VStack(alignment: .leading, spacing: 5) {

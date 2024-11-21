@@ -30,7 +30,6 @@ struct CalendarMainView: View {
                 List(calendarViewModel.giftsDisplayed) { giftIdea in
                     GiftItem(gift: giftIdea)
                 }
-                
                 CreateGift()
             }
             

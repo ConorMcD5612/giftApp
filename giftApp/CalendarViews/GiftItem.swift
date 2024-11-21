@@ -60,5 +60,5 @@ struct GiftItem: View {
 }
 
 #Preview {
-    GiftItem(gift: GiftIdea(recipName: "brian jefferson", date: Date(), giftName: "gift card "))
+    GiftItem(gift: GiftIdea(recipName: "brian jefferson", date: Date(), giftName: "gift card"))
 }

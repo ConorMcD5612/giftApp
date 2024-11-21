@@ -25,7 +25,7 @@ class CalendarViewModel: ObservableObject {
     }
     
     //giftIdeas for the currentDate
-    //maybe change to sub collection?
+    //TODO: Make it so that when on date with 0 it displays 0
     func getGiftIdeasCurrent() async throws {
         //query based on the calendar selected date
         let db = Firestore.firestore()
@@ -54,6 +54,7 @@ class CalendarViewModel: ObservableObject {
                 }
                 print(self.giftsDisplayed)
             } else {
+                self.giftsDisplayed = []
                 print("no giftIdeas for this date")
             }
         } catch {

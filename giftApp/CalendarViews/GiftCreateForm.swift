@@ -14,6 +14,7 @@ struct GiftCreateForm: View {
     
     
     func writeGiftIdea() {
+        creatingGift.toggle()
         Task {
             do {
                 try await calendarViewModel.writeGiftIdea()
