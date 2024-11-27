@@ -36,12 +36,31 @@ struct CalendarMainView: View {
             
             Spacer()
         }
-        .onChange(of: calendarViewModel.selectedDateCal) {
+        .onAppear() {
             Task {
                 do {
                     try await calendarViewModel.getGiftIdeasUpcoming()
                 } catch {
-                    print("getGiftIdeasCurrent failed in onChange")
+                    print("on appear calendarmainview failed")
+                }
+            }
+        }
+        .onChange(of: calendarViewModel.selectedDateCal) {
+            if Calendar.current.startOfDay(for: calendarViewModel.selectedDateCal) == Calendar.current.startOfDay(for: Date()) {
+                Task {
+                    do {
+                        try await calendarViewModel.getGiftIdeasUpcoming()
+                    } catch {
+                        print("upcoming calendarmainview")
+                    }
+                }
+            } else {
+                Task {
+                    do {
+                        try await calendarViewModel.getGiftIdeasCurrent()
+                    } catch {
+                        print("getGiftIdeasCurrent failed in onChange")
+                    }
                 }
             }
         }

@@ -125,7 +125,7 @@ class CalendarViewModel: ObservableObject {
         let giftData: [String: Any] = [
             "recipName": self.newGift.recipName,
             "date": self.newGift.date,
-            "giftName": self.newGift.giftName
+            "giftName": self.newGift.giftName	
         ]
         
         do {
