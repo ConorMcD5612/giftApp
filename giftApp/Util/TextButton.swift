@@ -39,7 +39,7 @@ struct TextButton: View {
                     Spacer()
                 }
                 Spacer()
-            }.frame(width: .infinity, height: text.count > 0 ? 70 : 50)
+            }.frame(height: text.count > 0 ? 70 : 50)
                 .padding([.leading, .trailing, .top])
         }.overlay(
             RoundedRectangle(cornerRadius: 0)
