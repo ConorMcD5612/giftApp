@@ -37,5 +37,7 @@ class UserViewModel: ObservableObject {
         } catch {
             print("fetch user data error")
         }
-    }    
+    }
+    
+    
 }

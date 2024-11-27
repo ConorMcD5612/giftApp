@@ -85,7 +85,18 @@ struct GiftCreateForm: View {
             Spacer()
         }
         .padding()
+        .onDisappear {
+            //pull down giftIdeas again
+            Task {
+                do {
+                    try await calendarViewModel.getGiftIdeasAll()
+                } catch {
+                    print("giftcreateform ondisappear failed")
+                }
+            }
+        }
     }
+       
 }
 
 #Preview {

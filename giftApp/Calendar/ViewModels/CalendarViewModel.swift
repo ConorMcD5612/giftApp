@@ -32,8 +32,7 @@ class CalendarViewModel: ObservableObject {
             //type cast firebase data
             let datesWithGifts = data?["datesWithGifts"] as? [String: [[String: Any]]]
             var arrayBuilder: [[String: Any]] = []
-            datesWithGifts?.forEach ({ dateStr, dateArray in
-                let date = stringToDate(dateStr: dateStr)
+            datesWithGifts?.forEach ({ _, dateArray in
                 //contents of the dateArray is the gift maps
                 arrayBuilder.append(contentsOf: dateArray)
             })
