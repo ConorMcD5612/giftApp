@@ -26,8 +26,8 @@ struct CalendarMainView: View {
                 .overlay(Color.black)
                 .padding(.vertical, 10)
             
-            VStack(spacing: 10) {
-                ForEach(calendarViewModel.giftsDisplayed) {
+            VStack(spacing: 10) {		
+	                ForEach(calendarViewModel.giftsDisplayed) {
                     giftIdea in
                     GiftItem(gift: giftIdea)
                 }
@@ -36,6 +36,7 @@ struct CalendarMainView: View {
             
             Spacer()
         }
+        
         .onAppear() {
             Task {
                 do {

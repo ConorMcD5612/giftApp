@@ -25,60 +25,66 @@ struct GiftCreateForm: View {
     }
     var body: some View {
         
-        VStack(spacing: 0) {
+        
+        VStack(spacing: 10) {
+           
             HStack {
-                VStack(alignment: .leading, spacing: 2) {
+                Text("Create a gift idea")
+                    .font(.title)
+                    .foregroundStyle(.blue)
+                    .fontWeight(.bold)
+                Spacer()
+            }
+            .padding(10)
+            
+            
+            HStack() {
+               
+                VStack(alignment: .leading, spacing: 5){
                     Text("Date:")
+                        .font(.system(size: 20))
                     DatePicker("Date", selection: $calendarViewModel.newGift.date, displayedComponents: [.date])
                         .labelsHidden()
                 }
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Recipient:")
-                    TextField("", text: $calendarViewModel.newGift.recipName)
-                        .border(Color.black, width: 1)
-                        .autocapitalization(.none)
-                }
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Gift:")
-                    TextField("", text: $calendarViewModel.newGift.giftName)
-                        .border(Color.black, width: 1)
-                        .autocapitalization(.none)
-                }
-            }
-            .padding()
-            .overlay {
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(Color.black)
+                Spacer()
+                    
             }
             .padding(.horizontal, 10)
-            HStack {
-                Button(action: {creatingGift.toggle()}) {
-                    Text("Close")
+            
+            Divider()
+                .padding(.horizontal, 10)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                StyledTextField(title: "Recipient", text: "Enter the gift recipient's name", entry: $calendarViewModel.newGift.recipName, characterLimit: 64)
+            }
+            .padding(.horizontal, 10)
+            
+            Divider()
+                .padding(.horizontal, 10)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                StyledTextField(title: "Gift", text: "Enter gift idea details", entry: $calendarViewModel.newGift.giftName, characterLimit: 64)
+            }
+            .padding(.horizontal, 10)
+            
+            HStack(){
+                Button("Cancel") {
+                    creatingGift.toggle()
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                
-                Divider()
-                    .frame(width: 1, height: 50)
-                    .overlay(Color.black)
-                    
+                .buttonStyle(.bordered)
+    
                 Button(action: writeGiftIdea) {
                     Text("Save")
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-            }
-            .frame(maxWidth: .infinity)
-            .overlay {
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(Color.black)
+                .buttonStyle(.borderedProminent)
+            
+                Spacer()
             }
             .padding(.horizontal, 10)
-
+            
+            Spacer()
         }
-       
+        .padding()
     }
 }
 
