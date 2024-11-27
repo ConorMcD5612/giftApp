@@ -47,7 +47,7 @@ class CalendarViewModel: ObservableObject {
             //filter the dates for range
             var giftsInRange: [[String: Any]] = []
             datesWithGifts?.forEach ({ dateStr, dateArray in
-                let date = DDMMYYToDate(dateStr: dateStr)
+                let date = stringToDate(dateStr: dateStr)
                 print("date: \(date)")
                 
                 //contents of the dateArray is the gift maps
@@ -83,7 +83,7 @@ class CalendarViewModel: ObservableObject {
             return
         }
         let query = db.collection("users").document(UID)
-        let timeStampString = DDMMYYFormat(date: self.selectedDateCal)
+        let timeStampString = dateToString(date: self.selectedDateCal)
         
         do {
             let data = try await query.getDocument().data()
@@ -120,7 +120,7 @@ class CalendarViewModel: ObservableObject {
             return
         }
         let query = db.collection("users").document(UID)
-        let timeStampString = DDMMYYFormat(date: self.newGift.date)
+        let timeStampString = dateToString(date: self.newGift.date)
         
         let giftData: [String: Any] = [
             "recipName": self.newGift.recipName,
@@ -147,7 +147,7 @@ class CalendarViewModel: ObservableObject {
     //util funcs
     
     
-    func DDMMYYFormat(date: Date) -> String {
+    func dateToString(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         let rtnString = formatter.string(from: date)
@@ -155,7 +155,7 @@ class CalendarViewModel: ObservableObject {
     }
     
     //this is so I can use date comparisons
-    func DDMMYYToDate(dateStr: String) -> Date {
+    func stringToDate(dateStr: String) -> Date {
         let formatter = DateFormatter()
         formatter.dateFormat = "M/d/yy"
         if let rtnDate = formatter.date(from: dateStr){
