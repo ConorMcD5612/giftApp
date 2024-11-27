@@ -27,6 +27,7 @@ class User: Codable, Identifiable {
          self.userUID = userUID
          self.wishlist = []
          self.preferences = []
+        //add more stuff here
      }
     
    
