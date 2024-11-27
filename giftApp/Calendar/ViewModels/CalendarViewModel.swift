@@ -21,11 +21,60 @@ class CalendarViewModel: ObservableObject {
     
     //getting all giftIdeas >= currentDay
     func getGiftIdeasUpcoming() async throws {
+        let db = Firestore.firestore()
+        guard let UID = Auth.auth().currentUser?.uid else {
+            print("user not authenticated")
+            return
+        }
+        let query = db.collection("users").document(UID)
+        
+        //TODO: function to fetch datesWithGifts
+        do {
+            let data = try await query.getDocument().data()
+            
+            //type cast firebase data
+            let datesWithGifts = data?["datesWithGifts"] as? [String: [[String: Any]]]
+            
+            
+            //should be currentDate start of the day to next month
+            let monthSeconds = 2.628e+6
+            let monthFromToday = Date().addingTimeInterval(monthSeconds)
+            let startOfToday = Calendar.current.startOfDay(for: Date())
+            
+            //a month from today for now
+            let dateRange = startOfToday...monthFromToday
+            
+            //filter the dates for range
+            var giftsInRange: [[String: Any]] = []
+            datesWithGifts?.forEach ({ dateStr, dateArray in
+                let date = DDMMYYToDate(dateStr: dateStr)
+                print("date: \(date)")
+                
+                //contents of the dateArray is the gift maps
+                if dateRange.contains(date) {
+                    giftsInRange.append(contentsOf: dateArray)
+                }
+            })
+            
+            let newGiftsDisplayed = giftsInRange
+            print("upcoming gifts: \(newGiftsDisplayed) ")
+            //need to combine the arrays for each date
+            DispatchQueue.main.async {
+                self.giftsDisplayed = newGiftsDisplayed.map { gift in
+                    //TODO: as? shouldn't matter though
+                    //convert from timestamp
+                    let date = gift["date"] as! Timestamp
+                    return GiftIdea(recipName: gift["recipName"] as! String, date: date.dateValue(), giftName: gift["giftName"] as! String)
+                }
+            }
+
+        } catch {
+            print("get upcoming giftideas failed")
+        }
         
     }
     
     //giftIdeas for the currentDate
-    //TODO: Make it so that when on date with 0 it displays 0
     func getGiftIdeasCurrent() async throws {
         //query based on the calendar selected date
         let db = Firestore.firestore()
@@ -95,12 +144,26 @@ class CalendarViewModel: ObservableObject {
         
     }
     
-    //util func
+    //util funcs
+    
+    
     func DDMMYYFormat(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         let rtnString = formatter.string(from: date)
         return rtnString
+    }
+    
+    //this is so I can use date comparisons
+    func DDMMYYToDate(dateStr: String) -> Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M/d/yy"
+        if let rtnDate = formatter.date(from: dateStr){
+            return rtnDate
+        } else {
+            print("str to date format error")
+            return Date()
+        }
     }
     
     

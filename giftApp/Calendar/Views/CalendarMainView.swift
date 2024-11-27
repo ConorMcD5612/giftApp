@@ -27,7 +27,8 @@ struct CalendarMainView: View {
                 .padding(.vertical, 10)
             
             VStack(spacing: 10) {
-                List(calendarViewModel.giftsDisplayed) { giftIdea in
+                ForEach(calendarViewModel.giftsDisplayed) {
+                    giftIdea in
                     GiftItem(gift: giftIdea)
                 }
                 CreateGift()
@@ -38,7 +39,7 @@ struct CalendarMainView: View {
         .onChange(of: calendarViewModel.selectedDateCal) {
             Task {
                 do {
-                    try await calendarViewModel.getGiftIdeasCurrent()
+                    try await calendarViewModel.getGiftIdeasUpcoming()
                 } catch {
                     print("getGiftIdeasCurrent failed in onChange")
                 }
