@@ -33,17 +33,17 @@ struct StyledTextEditor: View {
             ZStack {
                 TextEditor(text: $entry)
                     .scrollContentBackground(.hidden)
-                if (entry.count == 0) {
-                    VStack {
-                        HStack {
-                                Text(text)
-                                    .foregroundStyle(.gray)
-                                    .padding([.top], 7)
-                                    .padding([.leading], 4)
-                            Spacer()
+                VStack {
+                    HStack {
+                        if (entry.count == 0) {
+                            Text(text)
+                                .foregroundStyle(.gray)
+                                .padding([.top], 7)
+                                .padding([.leading], 4)
                         }
                         Spacer()
                     }
+                    Spacer()
                 }
             }.padding(6)
             .font(.system(size: 20))

@@ -1,5 +1,5 @@
 //
-//  AddPeopleView.swift
+//  AddRecipientView.swift
 //  giftApp
 //
 //  Created by jmathies on 10/18/24.
@@ -7,7 +7,12 @@
 
 import SwiftUI
 
-struct AddPeopleView: View {
+struct AddRecipientView: View {
+    @EnvironmentObject var settings: RecipientSettings
+    
+    // Used to pop view from NavigationStack
+    @Environment(\.dismiss) private var dismiss
+    
     @State var name: String = ""
     @State var birthday: String = ""
     @State var interests: String = ""
@@ -15,8 +20,7 @@ struct AddPeopleView: View {
     
     @State var confirmation: Bool = false
     
-    @Binding var addPerson: Bool
-    @Binding var people: [Person]
+    @Binding var recipients: [Recipient]
     
     var MAX_NAME_LENGTH: Int = 32
     var MAX_BIRTHDAY_LENGTH: Int = 5
@@ -37,15 +41,22 @@ struct AddPeopleView: View {
             }.padding([.bottom])
                         
             VStack(spacing: 10) {
-                StyledTextField(title: "Name", text: "Enter name here", entry: $name, characterLimit: MAX_NAME_LENGTH, hideLimit: false, autoCapitalization: UITextAutocapitalizationType.words)
-                
+                VStack(spacing: 0) {
+                    StyledTextField(title: "Name", text: "Enter name here", entry: $name, characterLimit: MAX_NAME_LENGTH, hideLimit: false, autoCapitalization: UITextAutocapitalizationType.words)
+                    HStack {
+                        Text("Required")
+                            .font(.system(size: 16))
+                            .foregroundStyle(.gray)
+                        Spacer()
+                    }
+                }
                 Divider()
                 
                 StyledTextField(title: "Birthday", text: "MM/DD", entry: $birthday, characterLimit: MAX_BIRTHDAY_LENGTH, hideLimit: true)
                 
                 Divider()
                 
-                StyledTextEditor(title: "Hobbies / Interests", entry: $interests, characterLimit: MAX_INTERESTS_LENGTH)
+                StyledTextEditor(title: "Interests", entry: $interests, characterLimit: MAX_INTERESTS_LENGTH)
                 Spacer()
             }
             .padding([.leading, .trailing], 20)
@@ -65,11 +76,15 @@ struct AddPeopleView: View {
             .toolbar() {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        confirmation = true
+                        if (name.count != 0 || birthday.count != 0 || interests.count != 0) {
+                            confirmation = true
+                        } else {
+                            dismiss()
+                        }
                     }.confirmationDialog("Are you sure you want to discard this new gift recipient?", isPresented: $confirmation, titleVisibility: .visible) {
                         Button("Discard Changes", role: .destructive) {
                             confirmation = false
-                            addPerson = false
+                            dismiss()
                         }
                         Button("Cancel", role: .cancel) {
                             confirmation = false
@@ -78,8 +93,10 @@ struct AddPeopleView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        addPerson = false
-                    }
+                        recipients.append(Recipient(name: name, birthday: birthday, interests: interests))
+                        settings.saveChanges()
+                        dismiss()
+                    }.disabled(name.count == 0)
                 }
             }
         }

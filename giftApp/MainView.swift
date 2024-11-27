@@ -19,7 +19,8 @@ struct MainView: View {
             
             if signedIn {
                 TabView {
-                    PeopleView()
+                    RecipientsView()
+                        .environmentObject(RecipientSettings())
                         .tabItem {
                             Image(systemName: "person")
                             Text("People")

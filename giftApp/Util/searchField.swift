@@ -9,7 +9,8 @@ import SwiftUI
 
 struct SearchField: View {
     @Binding var searchEntry: String
-    
+    @State var autoCapitalization: UITextAutocapitalizationType = UITextAutocapitalizationType.none
+
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
@@ -18,6 +19,7 @@ struct SearchField: View {
                 .padding([.leading, .top, .bottom], 5)
             Divider()
             TextField("Search", text: $searchEntry)
+                .autocapitalization(autoCapitalization)
                 .padding([.top, .bottom, .trailing], 5)
                 .foregroundStyle(.black)
         }.background(

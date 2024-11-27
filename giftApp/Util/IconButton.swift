@@ -50,7 +50,7 @@ struct IconButton: View {
                     }
                 }
                 Spacer()
-            }.frame(width: .infinity, height: 100)
+            }.frame(height: 100)
         }.overlay(
             RoundedRectangle(cornerRadius: 0)
                 .foregroundStyle(.gray)
