@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct GiftItem: View {
+    @EnvironmentObject private var calendarViewModel: CalendarViewModel
     let gift: GiftIdea
-    
-    
+  
     func dayFromTimestamp(timestamp: Date) -> String {
         let day = Calendar.current.dateComponents([.day], from: timestamp).day
         return day != nil ? "\(day!)" : ""
@@ -18,47 +18,34 @@ struct GiftItem: View {
     
     
     var body: some View {
-        HStack(alignment: .center) {
-            Spacer()
-            Text("\(dayFromTimestamp(timestamp: gift.date))")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding()
-            
-            Divider()
-                .frame(width: 2)
-                .overlay(Color.black)
-            Spacer()
-            VStack(alignment: .leading, spacing: 1){
-                Text("Name:")
-                    .fontWeight(.ultraLight)
+        HStack() {
+            VStack(alignment: .leading) {
                 Text(gift.recipName)
-                    .font(.system(size: 24))
+                    .fontWeight(.bold)
+                Text(calendarViewModel.dateToString(date: gift.date))
+                    .fontWeight(.ultraLight)
             }
-            Spacer()
-            Divider()
-                .frame(width: 2)
-                .overlay(Color.black)
+            .frame(width: 100, alignment: .leading)
             
-            Spacer()
-            VStack(alignment: .leading, spacing: 1){
-                Text("Gift:")
+            Divider()
+            VStack(alignment: .leading) {
+                Text("Gift Idea: ")
                     .fontWeight(.ultraLight)
                 Text(gift.giftName)
-                    .font(.system(size: 24))
+                    
             }
+            .padding(.horizontal, 10)
             Spacer()
+            
+            }
+            .lineLimit(1)
+            
         }
-        .frame(maxWidth: .infinity)
-        .overlay {
-            RoundedRectangle(cornerRadius: 5)
-                .stroke(.black)
-        }
-        .fixedSize(horizontal: false, vertical: true)
-        .padding(.horizontal, 10)
-    }
+        
+    
 }
 
 #Preview {
     GiftItem(gift: GiftIdea(recipName: "brian jefferson", date: Date(), giftName: "gift card"))
+        .environmentObject(CalendarViewModel())
 }

@@ -17,11 +17,11 @@ struct CalendarView: View {
             
         }
         .datePickerStyle(.graphical)
-        
+        .padding()
         Divider()
             .frame(height: 1)
             .overlay(Color.black)
-            .padding(.vertical, 10)
+            .padding(.top, 10)
     }
 }
 

@@ -19,6 +19,7 @@ struct CalendarMainView: View {
                 GiftCreateForm(creatingGift: $creatingGift)
             } else {
                 CalendarView()
+                Spacer()
                 GiftItemList()
                 CreateGiftBtn(creatingGift: $creatingGift)
                 Spacer()

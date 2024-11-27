@@ -12,10 +12,12 @@ struct GiftItemList: View {
  
     var body: some View {
         VStack(spacing: 10) {
-                ForEach(calendarViewModel.giftsDisplayed) {
+                List(calendarViewModel.giftsDisplayed) {
                 giftIdea in
                 GiftItem(gift: giftIdea)
             }
+                .listStyle(.grouped)
+                .scrollContentBackground(.hidden)
         }
     }
 }
