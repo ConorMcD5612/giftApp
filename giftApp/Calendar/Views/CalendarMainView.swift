@@ -20,6 +20,7 @@ struct CalendarMainView: View {
             } else {
                 CalendarView()
                 Spacer()
+                GiftsBtnGroup()
                 GiftItemList()
                 CreateGiftBtn(creatingGift: $creatingGift)
                 Spacer()

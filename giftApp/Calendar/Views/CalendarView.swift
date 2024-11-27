@@ -10,6 +10,7 @@ import SwiftUI
 struct CalendarView: View {
     @EnvironmentObject private var calendarViewModel: CalendarViewModel
     var body: some View {
+        //Wanted to use the datepicker as the main way of rendering giftIdeas on different dates. I would have to write my own
         DatePicker(
             selection: $calendarViewModel.selectedDateCal,
             displayedComponents: [.date]

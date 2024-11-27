@@ -11,7 +11,7 @@ struct GiftItemList: View {
     @EnvironmentObject private var calendarViewModel: CalendarViewModel
  
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
                 List(calendarViewModel.giftsDisplayed) {
                 giftIdea in
                 GiftItem(gift: giftIdea)

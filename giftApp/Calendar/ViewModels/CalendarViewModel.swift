@@ -18,6 +18,40 @@ class CalendarViewModel: ObservableObject {
     
     @Published var selectedDateCal: Date
     
+    func getGiftIdeasAll() async throws {
+        let db = Firestore.firestore()
+        guard let UID = Auth.auth().currentUser?.uid else {
+            print("user not authenticated")
+            return
+        }
+        let query = db.collection("users").document(UID)
+        
+        do {
+            let data = try await query.getDocument().data()
+            
+            //type cast firebase data
+            let datesWithGifts = data?["datesWithGifts"] as? [String: [[String: Any]]]
+            var arrayBuilder: [[String: Any]] = []
+            datesWithGifts?.forEach ({ dateStr, dateArray in
+                let date = stringToDate(dateStr: dateStr)
+                //contents of the dateArray is the gift maps
+                arrayBuilder.append(contentsOf: dateArray)
+            })
+            
+            let newGiftsDisplayed = arrayBuilder
+            
+            DispatchQueue.main.async {
+                self.giftsDisplayed = newGiftsDisplayed.map { gift in
+                    //TODO: as? shouldn't matter though
+                    //convert from timestamp
+                    let date = gift["date"] as! Timestamp
+                    return GiftIdea(recipName: gift["recipName"] as! String, date: date.dateValue(), giftName: gift["giftName"] as! String)
+                }
+            }
+        } catch {
+            print("getGiftIdeasAll failed")
+        }
+    }
     
     //getting all giftIdeas >= currentDay
     func getGiftIdeasUpcoming() async throws {
@@ -58,7 +92,6 @@ class CalendarViewModel: ObservableObject {
             
             let newGiftsDisplayed = giftsInRange
             print("upcoming gifts: \(newGiftsDisplayed) ")
-            //need to combine the arrays for each date
             DispatchQueue.main.async {
                 self.giftsDisplayed = newGiftsDisplayed.map { gift in
                     //TODO: as? shouldn't matter though
