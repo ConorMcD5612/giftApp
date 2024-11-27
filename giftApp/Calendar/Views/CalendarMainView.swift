@@ -10,33 +10,21 @@ import SwiftUI
 struct CalendarMainView: View {
     
     @EnvironmentObject private var calendarViewModel: CalendarViewModel
+    @State var creatingGift = false;
+    
     
     var body: some View {
         VStack {
-            DatePicker(
-                selection: $calendarViewModel.selectedDateCal,
-                displayedComponents: [.date]
-            ) {
-                
+            if creatingGift {
+                GiftCreateForm(creatingGift: $creatingGift)
+            } else {
+                CalendarView()
+                GiftItemList()
+                CreateGiftBtn(creatingGift: $creatingGift)
+                Spacer()
             }
-            .datePickerStyle(.graphical)
-            
-            Divider()
-                .frame(height: 1)
-                .overlay(Color.black)
-                .padding(.vertical, 10)
-            
-            VStack(spacing: 10) {		
-	                ForEach(calendarViewModel.giftsDisplayed) {
-                    giftIdea in
-                    GiftItem(gift: giftIdea)
-                }
-                CreateGift()
-            }
-            
-            Spacer()
+
         }
-        
         .onAppear() {
             Task {
                 do {
