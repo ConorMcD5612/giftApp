@@ -1,27 +1,25 @@
 //
-//  ModifyGiftIdeaView.swift
+//  AddGiftIdeaView.swift
 //  giftApp
 //
-//  Created by jmathies on 11/27/24.
+//  Created by jmathies on 11/25/24.
 //
 
 import SwiftUI
 
-struct ModifyGiftIdeaView: View {
-    @EnvironmentObject var settings: RecipientSettings
+struct AddGiftIdeaView: View {
+    @EnvironmentObject var settings: PersonalViewModel
     // Used to pop view from NavigationStack
     @Environment(\.dismiss) private var dismiss
-    
-    @Binding var recipient: Recipient
-    @Binding var giftIdea: RecipientGiftIdea
 
     @State var name: String = ""
     @State var description: String = ""
     @State var link: String = ""
     
-    @State var cancelConfirmation: Bool = false
-    @State var deleteConfirmation: Bool = false
-        
+    @State var confirmation: Bool = false
+    
+    @Binding var recipient: Recipient
+    
     var MAX_NAME_LENGTH: Int = 32
     var MAX_DESCRIPTION_LENGTH: Int = 320
     
@@ -42,22 +40,20 @@ struct ModifyGiftIdeaView: View {
             Divider()
             StyledTextEditor(title: "Description", entry: $description, characterLimit: MAX_DESCRIPTION_LENGTH)
             
-            Spacer()
-            
-            Button("Delete Gift Idea", role: .destructive) {
-                deleteConfirmation = true
-            }.confirmationDialog("Are you sure you want to delete this gift idea?", isPresented: $deleteConfirmation, titleVisibility: .visible) {
-                Button("Delete", role: .destructive) {
-                    deleteConfirmation = false
-                    recipient.remove(giftIdea: giftIdea)
-                    settings.saveChanges()
-                    // Returns to GiftIdeasListView for recipient
-                    settings.path.removeLast(2)
+            if (recipient.interests.count != 0){
+                Divider()
+                HStack {
+                    Text("\(recipient.name)'\(recipient.name.last?.lowercased() != "s" ? "s" : "") Interests")
+                        .font(.system(size: 20))
+                    Spacer()
                 }
-                Button("Cancel", role: .cancel) {
-                    deleteConfirmation = false
+                HStack {
+                    Text(recipient.interests)
+                        .multilineTextAlignment(.leading)
+                    Spacer()
                 }
             }
+            Spacer()
         }.padding([.leading, .trailing], 20)
         .padding([.top, .bottom], 10)
         
@@ -72,34 +68,27 @@ struct ModifyGiftIdeaView: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
                     if (name.count != 0 || description.count != 0) {
-                        cancelConfirmation = true
+                        confirmation = true
                     } else {
                         dismiss()
                     }
-                }.confirmationDialog("Are you sure you want to discard these changes?", isPresented: $cancelConfirmation, titleVisibility: .visible) {
+                }.confirmationDialog("Are you sure you want to discard this new gift idea?", isPresented: $confirmation, titleVisibility: .visible) {
                     Button("Discard Changes", role: .destructive) {
-                        cancelConfirmation = false
+                        confirmation = false
                         dismiss()
                     }
                     Button("Cancel", role: .cancel) {
-                        cancelConfirmation = false
+                        confirmation = false
                     }
                 }
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
-                    giftIdea.name = name
-                    giftIdea.link = link
-                    giftIdea.description = description
+                    recipient.giftIdeas.append(RecipientGiftIdea(name: name, description: description, link: link,creationDate: Date.now))
                     settings.saveChanges()
                     dismiss()
                 }.disabled(name.count == 0)
             }
-        }
-        .onAppear() {
-            name = giftIdea.name
-            link = giftIdea.link
-            description = giftIdea.description
         }
     }
 }

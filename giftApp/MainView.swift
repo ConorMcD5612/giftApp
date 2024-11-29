@@ -10,48 +10,56 @@ import FirebaseAuth
 
 struct MainView: View {
     @EnvironmentObject var appController: AppController
+    @StateObject var personalViewModel: PersonalViewModel = PersonalViewModel()
+    @StateObject var groupsViewModel: GroupsViewModel = GroupsViewModel()
     @StateObject var calendarViewModel: CalendarViewModel = CalendarViewModel()
     @State var signedIn = (Auth.auth().currentUser != nil)
     
     var body: some View {
         VStack {
-            
-            
-            if signedIn {
-                TabView {
-                    RecipientsView()
-                        .environmentObject(RecipientSettings())
-                        .tabItem {
-                            Image(systemName: "person")
-                            Text("People")
-                        }
-                    GroupsMainView()
-                        .tabItem {
-                            Image(systemName: "person.2")
-                            Text("Groups")
-                        }
-                    CalendarMainView()
-                        .environmentObject(calendarViewModel)
-                        .tabItem {
-                            Image(systemName: "calendar")
-                            Text("Calendar")
-                        }
-                        
-                    ProfileMainView()
-                        .tabItem {
-                            Image(systemName: "person.crop.circle")
-                            Text("Profile")
-                        }
+            TabView {
+                PersonalMainView().environmentObject(personalViewModel)
+                .tabItem {
+                    Image(systemName: "person")
+                    Text("Personal Ideas")
                 }
-            } else {
-                AuthView()
+                
+                // If not signed in, trying to go to the groups view leads to the sign in page
+                if signedIn {
+                    GroupsMainView().environmentObject(groupsViewModel)
+                    .tabItem {
+                        Image(systemName: "person.2")
+                        Text("Groups")
+                    }
+                } else {
+                    AuthView()
+                    .tabItem {
+                        Image(systemName: "person.2")
+                        Text("Groups")
+                    }
+                }
+                
+                CalendarMainView().environmentObject(calendarViewModel)
+                .tabItem {
+                    Image(systemName: "calendar")
+                    Text("Calendar")
+                }
+                
+                // TODO: Make profile accessible only from the GroupsView
+                if signedIn {
+                    ProfileView().environmentObject(appController)
+                    .tabItem {
+                        Image(systemName: "person.crop.circle")
+                        Text("Profile")
+                    }
+                }
             }
         }.onAppear {
             Task {
                 try await appController.initUserData()
             }
-            
-            Auth.auth().addStateDidChangeListener {auth, user in
+            // _ used to silence warning for unused var from addStateDidChangeListener
+            _ = Auth.auth().addStateDidChangeListener {auth, user in
                 signedIn = user != nil ? true : false
             }
         }
@@ -59,5 +67,5 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView()
+    MainView().environmentObject(AppController())
 }

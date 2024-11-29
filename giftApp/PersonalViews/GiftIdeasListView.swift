@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GiftIdeasListView: View {
-    @EnvironmentObject var settings: RecipientSettings
+    @EnvironmentObject var settings: PersonalViewModel
     
     @Binding var recipient: Recipient
     @State var searchEntry: String = ""

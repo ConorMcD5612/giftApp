@@ -14,7 +14,6 @@ struct GiftIdea: Codable, Identifiable {
     var date: Date
     var giftName: String
     
-    
     init(recipName: String, date: Date, giftName: String) {
         self.recipName = recipName
         self.date = date

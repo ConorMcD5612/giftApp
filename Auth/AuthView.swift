@@ -11,17 +11,15 @@ import SwiftUI
 struct AuthView: View {
     @State private var signingUp = false
     
-    
     var body: some View {
         VStack {
-                if signingUp {
-                    SignUpView(signingUp: $signingUp)
-                } else {
-                    LogInView(signingUp: $signingUp)
-                }
+            if signingUp {
+                SignUpView(signingUp: $signingUp)
+            } else {
+                LogInView(signingUp: $signingUp)
+            }
         }
     }
-    
 }
 
 #Preview {

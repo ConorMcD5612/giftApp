@@ -21,7 +21,7 @@ struct ProfileView: View {
             ZStack {
                 Circle().frame(width: 150, height: 150)
                     .foregroundStyle(.teal)
-                Text("\(appController.userViewModel?.user?.firstName.prefix(1).uppercased() ?? "")")
+                Text("\(appController.userViewModel?.user?.name.prefix(1).uppercased() ?? "")")
                     .font(.largeTitle)
                     .foregroundStyle(.white)
                     .bold()
@@ -29,8 +29,7 @@ struct ProfileView: View {
             HStack {
                 Text("Name:")
                     .fontWeight(.light)
-                Text(appController.userViewModel?.user?.firstName ?? "")
-                Text(appController.userViewModel?.user?.lastName ?? "")
+                Text(appController.userViewModel?.user?.name ?? "")
                 Spacer()
             }
             

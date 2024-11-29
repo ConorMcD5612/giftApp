@@ -50,22 +50,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B06D95E42CD2BD1F00FF908F /* Exceptions for "giftApp" folder in "giftAppTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ViewModel/User.swift,
-				ViewModel/UserViewModel.swift,
-			);
-			target = B04840D42CB1CBB60037110A /* giftAppTests */;
-		};
-		B06D95E52CD2BD1F00FF908F /* Exceptions for "giftApp" folder in "giftAppUITests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ViewModel/User.swift,
-				ViewModel/UserViewModel.swift,
-			);
-			target = B04840DE2CB1CBB60037110A /* giftAppUITests */;
-		};
 		B0A6026B2CBC785500EA9780 /* Exceptions for "giftApp" folder in "giftApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -80,8 +64,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				B0A6026B2CBC785500EA9780 /* Exceptions for "giftApp" folder in "giftApp" target */,
-				B06D95E42CD2BD1F00FF908F /* Exceptions for "giftApp" folder in "giftAppTests" target */,
-				B06D95E52CD2BD1F00FF908F /* Exceptions for "giftApp" folder in "giftAppUITests" target */,
 			);
 			path = giftApp;
 			sourceTree = "<group>";

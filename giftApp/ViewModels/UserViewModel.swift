@@ -29,7 +29,7 @@ class UserViewModel: ObservableObject {
             if let userData = try? document.data(as: User.self) {
                 //going to have to change this to not 1:1 matching db doc
                 self.user = userData
-                print("User data set \(self.user?.firstName ?? "name not found")")
+                print("User data set \(self.user?.name ?? "name not found")")
             } else {
                 print("userDocument does not exist/ does not match")
             }

@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct RecipientsView: View {
-    @EnvironmentObject var settings: RecipientSettings
+struct PersonalMainView: View {
+    @EnvironmentObject var settings: PersonalViewModel
     @State var searchEntry: String = ""
     
     var body: some View {
@@ -53,7 +53,7 @@ struct RecipientsView: View {
                     }
                 }.scrollBounceBehavior(.basedOnSize)
                 .padding([.top, .bottom])
-            }.navigationDestination(for: RecipientSettings.Views.self) { view in
+            }.navigationDestination(for: PersonalViewModel.Views.self) { view in
                 switch view {
                 case .addRecipient:
                     AddRecipientView(recipients: $settings.recipients)
@@ -74,5 +74,5 @@ struct RecipientsView: View {
 }
 
 #Preview {
-    RecipientsView().environmentObject(RecipientSettings())
+    PersonalMainView().environmentObject(PersonalViewModel())
 }

@@ -20,7 +20,6 @@ struct SignUpView: View {
             }
             .padding()
             
-            
             EmailPassView(signingUp: $signingUp)
             
             HStack {

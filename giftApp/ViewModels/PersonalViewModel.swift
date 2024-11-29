@@ -4,10 +4,12 @@
 //
 //  Created by jmathies on 11/25/24.
 //
+//  Contains, loads and saves data necessary for PersonalMainView
+//
 
-import SwiftUI
+import SwiftUICore
 
-class RecipientSettings: ObservableObject {
+class PersonalViewModel: ObservableObject {
     enum Views {
         case addRecipient, viewGiftIdeaList, modifyRecipient, addGiftIdea, viewGiftIdea, modifyGiftIdea
     }

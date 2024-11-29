@@ -15,46 +15,43 @@ struct LogInView: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            
-            
-                GoogleSignInButton(scheme: .dark, style: .wide, state: .normal) {
-                    GSignIn()
-                }
-                .cornerRadius(1)
-                .border(.black)
-                .padding(.horizontal)
-                
-                
-                HStack {
-                    VStack {
-                        Divider()
-                            .overlay(Color.black)
-                    }
-                    
-                    Text("Or")
-                        .padding(.horizontal)
-                    
-                    VStack {
-                        Divider()
-                            .overlay(Color.black)
-                    }
-                }
-                .padding()
-            
-           
+            Text("You must sign in before you can join and form groups!")
+                .font(.system(size: 14))
+
             EmailPassView(signingUp: $signingUp)
             
-        }
-        
-       
-        HStack {
-            Text("Don't have an account?")
-            Button("Sign Up") {
-                //This will switch views
-                signingUp.toggle()
+            HStack {
+                Text("Don't have an account?")
+                Button("Sign Up") {
+                    //This will switch views
+                    signingUp.toggle()
+                }
             }
+            .padding()
+            
+            HStack {
+                VStack {
+                    Divider()
+                        .overlay(Color.black)
+                }
+                
+                Text("Or")
+                    .padding(.horizontal)
+                
+                VStack {
+                    Divider()
+                        .overlay(Color.black)
+                }
+            }
+            .padding()
+            
+            GoogleSignInButton(scheme: .dark, style: .wide, state: .normal) {
+                GSignIn()
+            }
+            .cornerRadius(1)
+            .border(.black)
+            .padding(.horizontal)
         }
-        .padding()
     }
     
     func GSignIn() {

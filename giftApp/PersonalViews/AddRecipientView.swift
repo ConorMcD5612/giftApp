@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddRecipientView: View {
-    @EnvironmentObject var settings: RecipientSettings
+    @EnvironmentObject var settings: PersonalViewModel
     
     // Used to pop view from NavigationStack
     @Environment(\.dismiss) private var dismiss
