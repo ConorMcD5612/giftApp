@@ -16,15 +16,36 @@ struct ModifyRecipientView: View {
     @Binding var recipient: Recipient
     
     @State var name: String = ""
-    @State var birthday: String = ""
+    
+    @State var birthmonth: String = "January"
+    @State var birthday: Int = 1
+    
     @State var interests: String = ""
         
+    @State var addBirthday: Bool = false
     @State var cancelConfirmation: Bool = false
     @State var deleteConfirmation: Bool = false
         
     var MAX_NAME_LENGTH: Int = 32
     var MAX_BIRTHDAY_LENGTH: Int = 5
     var MAX_INTERESTS_LENGTH: Int = 320
+    
+    var VALID_MONTHS: [String] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    var VALID_DAYS: [String : [Int]] = [
+        "January": Array(1...31),
+        "February": Array(1...29),
+        "March": Array(1...31),
+        "April": Array(1...30),
+        "May": Array(1...31),
+        "June": Array(1...30),
+        "July": Array(1...31),
+        "August": Array(1...31),
+        "September": Array(1...30),
+        "October": Array(1...31),
+        "November": Array(1...30),
+        "December": Array(1...31)
+    ]
     
     var body: some View {
         VStack {
@@ -52,7 +73,45 @@ struct ModifyRecipientView: View {
                 }
                 Divider()
                 
-                StyledTextField(title: "Birthday", text: "MM/DD", entry: $birthday, characterLimit: MAX_BIRTHDAY_LENGTH, hideLimit: true)
+                VStack(spacing: 5) {
+                    HStack {
+                        Text("Birthday")
+                            .font(.system(size: 20))
+                        Spacer()
+                    }
+                    if (addBirthday) {
+                        HStack {
+                            HStack {
+                                Picker(selection: $birthmonth, label: Text("Test")) {
+                                    ForEach(VALID_MONTHS, id: \.self) {
+                                        Text($0)
+                                    }
+                                }
+                                Picker(selection: $birthday, label: Text("Test2")) {
+                                    ForEach(VALID_DAYS[birthmonth] ?? [], id: \.self) {
+                                        Text("\($0)")
+                                        
+                                    }
+                                }
+                            }.overlay(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .foregroundStyle(.gray)
+                                    .opacity(0.2)
+                            )
+                            Button("Delete", role: .destructive) {
+                                addBirthday = false
+                            }
+                            Spacer()
+                        }
+                    } else {
+                        HStack {
+                            Button("Add") {
+                                addBirthday = true
+                            }
+                            Spacer()
+                        }
+                    }
+                }
                 
                 Divider()
                 
@@ -83,14 +142,16 @@ struct ModifyRecipientView: View {
                         name[(name.firstIndex(where: { !$0.isWhitespace }) ?? name.startIndex)...]
                     )
             }
-            .onChange(of: birthday) {
-                // TODO: Format input (make sure entered month & day is valid)
+            .onChange(of: birthmonth) {
+                if !VALID_DAYS[birthmonth]!.contains(birthday) {
+                    birthday = 1
+                }
             }
             .navigationBarBackButtonHidden()
             .toolbar() {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        if (name != recipient.name || birthday != recipient.birthday || interests != recipient.interests) {
+                        if (name != recipient.name || interests != recipient.interests || addBirthday && (birthmonth != recipient.birthmonth || birthday != recipient.birthday)) {
                             cancelConfirmation = true
                         } else {
                             dismiss()
@@ -107,11 +168,18 @@ struct ModifyRecipientView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        // Required to push changes to
+                        // Required to push changes to prior views
                         settings.objectWillChange.send()
                         recipient.name = name
-                        recipient.birthday = birthday
+                        if addBirthday {
+                            recipient.birthmonth = birthmonth
+                            recipient.birthday = birthday
+                        } else {
+                            recipient.birthmonth = nil
+                            recipient.birthday = nil
+                        }
                         recipient.interests = interests
+
                         settings.saveChanges()
                         dismiss()
                     }.disabled(name.count == 0)
@@ -119,7 +187,11 @@ struct ModifyRecipientView: View {
             }
         }.onAppear() {
             name = recipient.name
-            birthday = recipient.birthday
+            if recipient.birthmonth != nil && recipient.birthday != nil {
+                addBirthday = true
+                birthmonth = recipient.birthmonth!
+                birthday = recipient.birthday!
+            }
             interests = recipient.interests
         }
     }

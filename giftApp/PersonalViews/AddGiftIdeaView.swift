@@ -84,7 +84,7 @@ struct AddGiftIdeaView: View {
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
-                    recipient.giftIdeas.append(RecipientGiftIdea(name: name, description: description, link: link,creationDate: Date.now))
+                    recipient.giftIdeas.append(RecipientGiftIdea(name: name, description: description, link: link, creationDate: Date.now, giftingDate: nil))
                     settings.saveChanges()
                     dismiss()
                 }.disabled(name.count == 0)

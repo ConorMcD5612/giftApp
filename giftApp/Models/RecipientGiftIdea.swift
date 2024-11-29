@@ -11,16 +11,22 @@ class RecipientGiftIdea: Identifiable, Codable {
     var id: UUID
     var name: String
     var description: String
-    var link: String
-    var creationDate: Date
-    var giftedDate: Date?
     
-    init(id: UUID = UUID(), name: String, description: String, link: String, creationDate: Date) {
+    // Web address to site where gift can be purchased
+    var link: String
+    
+    // Date the idea was created
+    var creationDate: Date
+    
+    // Expected date for when the gift will be gifted
+    var giftingDate: Date?
+    
+    init(id: UUID = UUID(), name: String, description: String, link: String, creationDate: Date, giftingDate: Date?) {
         self.id = id
         self.name = name
         self.description = description
         self.link = link
         self.creationDate = creationDate
-        self.giftedDate = nil
+        self.giftingDate = giftingDate
     }
 }

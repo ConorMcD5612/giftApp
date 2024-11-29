@@ -14,17 +14,37 @@ struct AddRecipientView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State var name: String = ""
-    @State var birthday: String = ""
+    
+    @State var birthmonth: String = "January"
+    @State var birthday: Int = 1
+
     @State var interests: String = ""
     @State var text: String = ""
     
     @State var confirmation: Bool = false
+    @State var addBirthday: Bool = false
     
     @Binding var recipients: [Recipient]
     
     var MAX_NAME_LENGTH: Int = 32
-    var MAX_BIRTHDAY_LENGTH: Int = 5
     var MAX_INTERESTS_LENGTH: Int = 320
+    
+    var VALID_MONTHS: [String] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    var VALID_DAYS: [String : [Int]] = [
+        "January": Array(1...31),
+        "February": Array(1...29),
+        "March": Array(1...31),
+        "April": Array(1...30),
+        "May": Array(1...31),
+        "June": Array(1...30),
+        "July": Array(1...31),
+        "August": Array(1...31),
+        "September": Array(1...30),
+        "October": Array(1...31),
+        "November": Array(1...30),
+        "December": Array(1...31)
+    ]
     
     var body: some View {
         VStack {
@@ -52,7 +72,49 @@ struct AddRecipientView: View {
                 }
                 Divider()
                 
-                StyledTextField(title: "Birthday", text: "MM/DD", entry: $birthday, characterLimit: MAX_BIRTHDAY_LENGTH, hideLimit: true)
+                VStack {
+                    
+                }
+                
+                VStack(spacing: 5) {
+                    HStack {
+                        Text("Birthday")
+                            .font(.system(size: 20))
+                        Spacer()
+                    }
+                    if (addBirthday) {
+                        HStack {
+                            HStack {
+                                Picker(selection: $birthmonth, label: Text("Test")) {
+                                    ForEach(VALID_MONTHS, id: \.self) {
+                                        Text($0)
+                                    }
+                                }
+                                Picker(selection: $birthday, label: Text("Test2")) {
+                                    ForEach(VALID_DAYS[birthmonth] ?? [], id: \.self) {
+                                        Text("\($0)")
+                                        
+                                    }
+                                }
+                            }.overlay(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .foregroundStyle(.gray)
+                                    .opacity(0.2)
+                            )
+                            Button("Delete", role: .destructive) {
+                                addBirthday = false
+                            }
+                            Spacer()
+                        }
+                    } else {
+                        HStack {
+                            Button("Add") {
+                                addBirthday = true
+                            }
+                            Spacer()
+                        }
+                    }
+                }
                 
                 Divider()
                 
@@ -69,14 +131,14 @@ struct AddRecipientView: View {
                         name[(name.firstIndex(where: { !$0.isWhitespace }) ?? name.startIndex)...]
                     )
             }
-            .onChange(of: birthday) {
-                // TODO: Format input (make sure entered month & day is valid)
+            .onChange(of: birthmonth) {
+                birthday = 1
             }
             .navigationBarBackButtonHidden()
             .toolbar() {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        if (name.count != 0 || birthday.count != 0 || interests.count != 0) {
+                        if (name.count != 0 || interests.count != 0) {
                             confirmation = true
                         } else {
                             dismiss()
@@ -93,7 +155,7 @@ struct AddRecipientView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        recipients.append(Recipient(name: name, birthday: birthday, interests: interests))
+                        recipients.append(Recipient(name: name, birthmonth: addBirthday ? birthmonth : nil, birthday: addBirthday ? birthday: nil, interests: interests))
                         settings.saveChanges()
                         dismiss()
                     }.disabled(name.count == 0)

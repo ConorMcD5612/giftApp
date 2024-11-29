@@ -44,9 +44,9 @@ class PersonalViewModel: ObservableObject {
         }
         
         self.path = []
-        // Placeholders; never get utilized
-        self.selectedRecipient = Recipient(name: "", birthday: "", interests: "")
-        self.selectedGiftIdea = RecipientGiftIdea(name: "", description: "", link: "", creationDate: Date())
+        // Placeholders; never get utilized; don't wanna deal with optionals (prob worth turning into optionals)
+        self.selectedRecipient = Recipient(name: "", birthmonth: nil, birthday: nil, interests: "")
+        self.selectedGiftIdea = RecipientGiftIdea(name: "", description: "", link: "", creationDate: Date(), giftingDate: nil)
     }
     
     @discardableResult
@@ -85,6 +85,7 @@ func load<T: Decodable>(_ url: URL) -> T {
         return try decoder.decode(T.self, from: data)
     } catch {
         print("parse \(url.path)")
+        // if you get this error, set loadFromFile to false
         fatalError("Couldn't parse \(url.path) as \(T.self):\n\(error)")
     }
 }
