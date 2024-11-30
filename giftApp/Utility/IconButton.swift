@@ -11,6 +11,7 @@ struct IconButton: View {
     var text: String = ""
     var subtext: String = ""
     var iconName: String = ""
+    var iconColor: Color = .teal
     var action: () -> Void = {}
     
     var body: some View {
@@ -26,7 +27,7 @@ struct IconButton: View {
                     ZStack {
                         Circle()
                             .frame(width: 75, height: 75)
-                            .foregroundStyle(.teal)
+                            .foregroundStyle(iconColor)
                         Text(text.prefix(1).uppercased())
                             .font(.title)
                             .foregroundStyle(.white)

@@ -12,11 +12,11 @@ struct LogInView: View {
     @StateObject private var appController = AppController()
     @Binding var signingUp: Bool
     
-    
     var body: some View {
         VStack(spacing: 10) {
             Text("You must sign in before you can join and form groups!")
                 .font(.system(size: 14))
+                .padding([.bottom])
 
             EmailPassView(signingUp: $signingUp)
             

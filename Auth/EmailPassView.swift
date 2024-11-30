@@ -12,10 +12,8 @@ struct EmailPassView: View {
     @EnvironmentObject private var appController: AppController
     @Binding var signingUp: Bool
     
-    @State var birthday: Date = Date()
-    @State var firstName: String = ""
-    @State var lastName: String = ""
-    
+    @State var name: String = ""
+    @State var errorMessage: String = ""
     
     var body: some View {
         ZStack {
@@ -30,47 +28,31 @@ struct EmailPassView: View {
                 }
                 .padding()
                 
-                
-                
             VStack(alignment: .leading, spacing: 15) {
                 if(signingUp){
                     VStack(alignment: .leading, spacing: 5) {
                         HStack {
                             VStack(alignment: .leading, spacing: 5) {
-                                Text("First")
-                                TextField("", text: $firstName)
+                                Text("Name")
+                                TextField("", text: $name)
                                     .autocapitalization(.none)
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("Last")
-                                TextField("", text: $lastName)
-                                    .autocapitalization(.none)
+                                    .autocorrectionDisabled()
                             }
                         }
                     }
                 }
                 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("Username")
+                    Text("Email Address")
                     TextField("", text: $appController.username)
                         .autocapitalization(.none)
+                        .autocorrectionDisabled()
                 }
-                
-                
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Password")
                     SecureField("", text: $appController.password)
                         .autocapitalization(.none)
-                }
-                if(signingUp) {
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text("Birthday")
-                        DatePicker("",selection: $birthday, displayedComponents: [.date])
-                            .labelsHidden()
-                    }
-                    
                 }
                 
                 //Depending on what view signIn / signUp buttoon
@@ -79,7 +61,9 @@ struct EmailPassView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                
+                Text(errorMessage)
+                    .font(.system(size: 14))
+                    .foregroundStyle(.red)
             }
             .padding(30)
             .textFieldStyle(.roundedBorder)
@@ -93,6 +77,7 @@ struct EmailPassView: View {
             do {
                 try await appController.signIn()
             } catch {
+                errorMessage = "Incorrect email address or password"
                 print(error.localizedDescription)
             }
         }
@@ -101,8 +86,9 @@ struct EmailPassView: View {
     func signUp() {
         Task {
             do {
-                try await appController.signUp(first: firstName, last: lastName, email: appController.username, password: appController.password, birthday: birthday)
+                try await appController.signUp(name: name, email: appController.username, password: appController.password)
             } catch {
+                errorMessage = error.localizedDescription
                 print(error.localizedDescription)
             }
         }

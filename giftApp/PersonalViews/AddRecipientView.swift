@@ -24,6 +24,9 @@ struct AddRecipientView: View {
     @State var confirmation: Bool = false
     @State var addBirthday: Bool = false
     
+    // @State var iconColor: Color = Color(red: Double.random(in: 0...0.7), green: Double.random(in: 0...0.7), blue: Double.random(in: 0...0.7))
+    @State var iconColor: Color = .teal
+    
     @Binding var recipients: [Recipient]
     
     var MAX_NAME_LENGTH: Int = 32
@@ -53,7 +56,7 @@ struct AddRecipientView: View {
             // a custom image for a person
             ZStack {
                 Circle().frame(width: 150, height: 150)
-                    .foregroundStyle(.teal)
+                    .foregroundStyle(iconColor)
                 Text("\(name.prefix(1).uppercased())")
                     .font(.largeTitle)
                     .foregroundStyle(.white)

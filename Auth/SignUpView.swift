@@ -28,7 +28,6 @@ struct SignUpView: View {
                     signingUp.toggle()
                 }
             }
-            
         }
     }
 }

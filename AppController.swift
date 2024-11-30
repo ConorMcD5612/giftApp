@@ -75,7 +75,7 @@ class AppController: ObservableObject {
         try await Auth.auth().signIn(withEmail: username, password: password)
     }
     
-    func signUp(first: String, last: String, email: String, password: String, birthday: Date) async throws {
+    func signUp(name: String, email: String, password: String) async throws {
         //TODO: Make a struct for signUpInfo and pass that
         try await Auth.auth().createUser(withEmail: email, password: password)
         
@@ -87,15 +87,11 @@ class AppController: ObservableObject {
         
         //create new user document
         try await db.collection("users").document(UID).setData([
-              "firstName": first,
-              "lastName": last,
-              "email": email,
-              "birthday": birthday,
-              "wishlist": [],
-              "preferences": []
+            "name": name,
+            "email": email,
+            "wishlist": [],
+            "preferences": []
         ])
-      
-       
     }
     
     func signOut() throws {

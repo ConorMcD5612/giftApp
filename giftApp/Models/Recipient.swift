@@ -17,7 +17,7 @@ class Recipient: Codable {
     var interests: String
     
     var giftIdeas: [RecipientGiftIdea]
-    
+        
     init(id: UUID = UUID(), name: String, birthmonth: String?, birthday: Int?, interests: String)
     {
         self.id = id
