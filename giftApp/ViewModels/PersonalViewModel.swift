@@ -11,7 +11,7 @@ import SwiftUICore
 
 class PersonalViewModel: ObservableObject {
     enum Views {
-        case addRecipient, viewGiftIdeaList, modifyRecipient, addGiftIdea, viewGiftIdea, modifyGiftIdea
+        case addRecipient, viewGiftIdeaList, editRecipient, addGiftIdea, viewGiftIdea, editGiftIdea
     }
     
     // Set to false after changing data structures

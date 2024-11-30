@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ModifyGiftIdeaView: View {
+struct EditGiftIdeaView: View {
     @EnvironmentObject var settings: PersonalViewModel
     // Used to pop view from NavigationStack
     @Environment(\.dismiss) private var dismiss
@@ -97,7 +97,13 @@ struct ModifyGiftIdeaView: View {
                 )
         }
         .navigationBarBackButtonHidden()
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar() {
+            ToolbarItem(placement: .principal) {
+                VStack {
+                    Text("Editing Gift Idea").font(.headline)
+                }
+            }
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
                     if (name != giftIdea.name || link != giftIdea.link || description != giftIdea.description || expectedGiftingDate && giftingDate != giftIdea.giftingDate || !expectedGiftingDate && giftIdea.giftingDate != nil) {

@@ -64,7 +64,7 @@ struct GiftIdeaView: View {
         .toolbar() {
             ToolbarItem(placement: .confirmationAction) {
                 Button("", systemImage: "square.and.pencil") {
-                    settings.path.append(.modifyGiftIdea)
+                    settings.path.append(.editGiftIdea)
                 }
             }
         }

@@ -17,7 +17,7 @@ struct GiftIdeasListView: View {
     
     var body: some View {
         VStack {
-            VStack {
+            VStack(spacing: 0) {
                 HStack {
                     Text("Gift Ideas")
                     Spacer()
@@ -65,7 +65,7 @@ struct GiftIdeasListView: View {
         .toolbar() {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Edit Recipient") {
-                    settings.path.append(.modifyRecipient)
+                    settings.path.append(.editRecipient)
                 }
             }
         }

@@ -61,7 +61,7 @@ struct AddRecipientView: View {
                     .font(.largeTitle)
                     .foregroundStyle(.white)
                     .bold()
-            }.padding([.bottom])
+            }.padding([.top, .bottom])
                         
             VStack(spacing: 10) {
                 VStack(spacing: 0) {
@@ -138,7 +138,13 @@ struct AddRecipientView: View {
                 birthday = 1
             }
             .navigationBarBackButtonHidden()
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar() {
+                ToolbarItem(placement: .principal) {
+                    VStack {
+                        Text("Creating New Recipient").font(.headline)
+                    }
+                }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         if (name.count != 0 || interests.count != 0) {

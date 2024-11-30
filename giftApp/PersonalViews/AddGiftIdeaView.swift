@@ -94,7 +94,14 @@ struct AddGiftIdeaView: View {
                 )
         }
         .navigationBarBackButtonHidden()
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar() {
+            ToolbarItem(placement: .principal) {
+                VStack {
+                    Text("Creating New Gift Idea").font(.headline)
+                    Text("For \(recipient.name)").font(.subheadline)
+                }
+            }
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
                     if (name.count != 0 || description.count != 0) {

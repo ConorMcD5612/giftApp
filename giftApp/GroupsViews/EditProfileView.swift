@@ -45,6 +45,14 @@ struct EditProfileView: View {
     func save() {
         appController.objectWillChange.send()
         appController.userViewModel?.user?.name = name
+        if (addBirthday) {
+            appController.userViewModel?.user?.birthmonth = birthmonth
+            appController.userViewModel?.user?.birthday = birthday
+        } else {
+            appController.userViewModel?.user?.birthmonth = nil
+            appController.userViewModel?.user?.birthday = nil
+        }
+        
         Task {
             do {
                 try await appController.userViewModel?.saveUserData()
@@ -67,7 +75,7 @@ struct EditProfileView: View {
                     .font(.largeTitle)
                     .foregroundStyle(.white)
                     .bold()
-            }.padding([.bottom])
+            }.padding([.top, .bottom])
                         
             VStack(spacing: 10) {
                 VStack(spacing: 0) {
@@ -98,7 +106,6 @@ struct EditProfileView: View {
                                 Picker(selection: $birthday, label: EmptyView()) {
                                     ForEach(VALID_DAYS[birthmonth] ?? [], id: \.self) {
                                         Text("\($0)")
-                                        
                                     }
                                 }
                             }.overlay(
@@ -146,11 +153,16 @@ struct EditProfileView: View {
                 }
             }
             .navigationBarBackButtonHidden()
+            .toolbarTitleDisplayMode(.inline)
             .toolbar() {
+                ToolbarItem(placement: .principal) {
+                    Text("Editing Profile").font(.headline)
+                }
+                
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         // TODO: Do checks to see if confirmation is needed
-                        if (true) {
+                        if (name != appController.userViewModel?.user?.name || (addBirthday && (birthday != appController.userViewModel?.user?.birthday || birthmonth != appController.userViewModel?.user?.birthmonth))) {
                             cancelConfirmation = true
                         } else {
                             dismiss()
@@ -171,6 +183,11 @@ struct EditProfileView: View {
             }
         }.onAppear() {
             name = appController.userViewModel?.user?.name ?? ""
+            if (appController.userViewModel?.user?.birthmonth != nil) {
+                addBirthday = true
+            }
+            birthmonth = appController.userViewModel?.user?.birthmonth ?? "January"
+            birthday = appController.userViewModel?.user?.birthday ?? 1
         }
     }
 }

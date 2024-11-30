@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ModifyRecipientView: View {
+struct EditRecipientView: View {
     @EnvironmentObject var settings: PersonalViewModel
     // Used to pop view from NavigationStack
     @Environment(\.dismiss) private var dismiss
@@ -57,7 +57,7 @@ struct ModifyRecipientView: View {
                     .font(.largeTitle)
                     .foregroundStyle(.white)
                     .bold()
-            }.padding([.bottom])
+            }.padding([.top, .bottom])
                         
             VStack(spacing: 10) {
                 VStack(spacing: 0) {
@@ -146,7 +146,13 @@ struct ModifyRecipientView: View {
                 }
             }
             .navigationBarBackButtonHidden()
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar() {
+                ToolbarItem(placement: .principal) {
+                    VStack {
+                        Text("Editing Recipient").font(.headline)
+                    }
+                }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         if (name != recipient.name || interests != recipient.interests || (addBirthday && (birthmonth != recipient.birthmonth || birthday != recipient.birthday) || (!addBirthday && recipient.birthday != nil))) {

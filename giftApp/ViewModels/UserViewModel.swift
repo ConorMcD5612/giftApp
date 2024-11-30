@@ -52,7 +52,9 @@ class UserViewModel: ObservableObject {
             //write timestamp field based on date selected
             //DateswithGifts->array->giftIdea (
             try await query.setData([
-                "name": user!.name
+                "name": user!.name,
+                "birthmonth": user!.birthmonth as Any,
+                "birthday": user!.birthday as Any
             ], merge: true)
         } catch {
             print("Error with setting giftIdea")

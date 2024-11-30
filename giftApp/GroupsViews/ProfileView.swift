@@ -47,7 +47,7 @@ struct ProfileView: View {
             HStack {
                 Text("Birthday:")
                 if (appController.userViewModel?.user?.birthday != nil) {
-                    Text(formatDate(date: (appController.userViewModel?.user?.birthday)!))
+                    Text("\(appController.userViewModel?.user?.birthmonth ?? "January") \(appController.userViewModel?.user?.birthday ?? 1)")
                 } else {
                     Text("N/A")
                 }

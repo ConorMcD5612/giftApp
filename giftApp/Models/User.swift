@@ -13,14 +13,17 @@ class User: Codable, Identifiable {
     var name: String
     var email: String;
     
-    var birthday: Date?;
-    var wishlist: [String]?;
-    var interests: [String]?;
+    var birthmonth: String?
+    var birthday: Int?
     
-    init(id: String? = nil, name: String = "", email: String = "", birthday: Date? = nil) {
+    var wishlist: [String]?
+    var interests: [String]?
+    
+    init(id: String?, name: String, email: String, birthmonth: String?, birthday: Int?) {
         self.id = id
         self.name = name
         self.email = email
+        self.birthmonth = birthmonth
         self.birthday = birthday
         self.wishlist = []
         self.interests = []
