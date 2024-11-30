@@ -52,12 +52,10 @@ class AppController: ObservableObject {
             
             if !document.exists {
                 try await db.collection("users").document(UID).setData([
-                    "firstName": googleUserData?.givenName ?? "",
-                    "lastName": googleUserData?.familyName ?? "",
+                    "name": googleUserData?.givenName ?? "",
                     "email": googleUserData?.email ?? "",
-                    "birthday": Timestamp(seconds: 0, nanoseconds: 0),
                     "wishlist": [],
-                    "preferences": []
+                    "interests": []
                 ])
             }
             print("Gsignin worked")
@@ -90,7 +88,7 @@ class AppController: ObservableObject {
             "name": name,
             "email": email,
             "wishlist": [],
-            "preferences": []
+            "interests": []
         ])
     }
     

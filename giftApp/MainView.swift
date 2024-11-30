@@ -26,7 +26,9 @@ struct MainView: View {
                 
                 // If not signed in, trying to go to the groups view leads to the sign in page
                 if signedIn {
-                    GroupsMainView().environmentObject(groupsViewModel)
+                    GroupsMainView()
+                        .environmentObject(appController)
+                        .environmentObject(groupsViewModel)
                     .tabItem {
                         Image(systemName: "person.2")
                         Text("Groups")
@@ -43,15 +45,6 @@ struct MainView: View {
                 .tabItem {
                     Image(systemName: "calendar")
                     Text("Calendar")
-                }
-                
-                // TODO: Make profile accessible only from the GroupsView
-                if signedIn {
-                    ProfileView().environmentObject(appController)
-                    .tabItem {
-                        Image(systemName: "person.crop.circle")
-                        Text("Profile")
-                    }
                 }
             }
         }.onAppear {

@@ -39,5 +39,23 @@ class UserViewModel: ObservableObject {
         }
     }
     
-    
+    func saveUserData() async throws {
+        let db = Firestore.firestore()
+        guard let UID = Auth.auth().currentUser?.uid else {
+            print("user not authenticated")
+            return
+        }
+        print("\(UID)")
+        let query = db.collection("users").document(UID)
+        
+        do {
+            //write timestamp field based on date selected
+            //DateswithGifts->array->giftIdea (
+            try await query.setData([
+                "name": user!.name
+            ], merge: true)
+        } catch {
+            print("Error with setting giftIdea")
+        }
+    }
 }

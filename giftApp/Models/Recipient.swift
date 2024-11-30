@@ -5,7 +5,7 @@
 //  Created by jmathies on 11/19/24.
 //
 
-import SwiftUICore
+import SwiftUI
 
 class Recipient: Codable {
     var id: UUID

@@ -1,29 +1,26 @@
 //
-//  ModifyRecipientView.swift
+//  EditProfileView.swift
 //  giftApp
 //
-//  Created by jmathies on 11/26/24.
+//  Created by jmathies on 11/30/24.
 //
 
 import SwiftUI
 
-struct ModifyRecipientView: View {
-    @EnvironmentObject var settings: PersonalViewModel
+struct EditProfileView: View {
+    @EnvironmentObject var appController: AppController
+    @EnvironmentObject var settings: GroupsViewModel
     // Used to pop view from NavigationStack
     @Environment(\.dismiss) private var dismiss
     
-    @Binding var recipient: Recipient
-    
     @State var name: String = ""
-    
     @State var birthmonth: String = "January"
     @State var birthday: Int = 1
     
-    @State var interests: String = ""
+    @State var interests: [String] = []
         
     @State var addBirthday: Bool = false
     @State var cancelConfirmation: Bool = false
-    @State var deleteConfirmation: Bool = false
         
     var MAX_NAME_LENGTH: Int = 32
     var MAX_INTERESTS_LENGTH: Int = 320
@@ -44,6 +41,19 @@ struct ModifyRecipientView: View {
         "November": Array(1...30),
         "December": Array(1...31)
     ]
+    
+    func save() {
+        appController.objectWillChange.send()
+        appController.userViewModel?.user?.name = name
+        Task {
+            do {
+                try await appController.userViewModel?.saveUserData()
+            } catch {
+                print("Write gift view didn't work")
+            }
+        }
+        dismiss()
+    }
     
     var body: some View {
         VStack {
@@ -113,26 +123,16 @@ struct ModifyRecipientView: View {
                 
                 Divider()
                 
-                StyledTextEditor(title: "Interests", entry: $interests, characterLimit: MAX_INTERESTS_LENGTH)
+                // TODO: Add place to insert wishlist items
+                
+                Divider()
+                
+                // TODO: Add place to insert interests
+                
                 Spacer()
-                Button("Delete Recipient", role: .destructive) {
-                    deleteConfirmation = true
-                }.confirmationDialog("Are you sure you want to delete this gift recipient?\n All of their info and gift ideas will be deleted!", isPresented: $deleteConfirmation, titleVisibility: .visible) {
-                    Button("Delete", role: .destructive) {
-                        deleteConfirmation = false
-                        settings.remove(recipient: recipient)
-                        settings.saveChanges()
-                        // Returns to root view
-                        settings.path.removeAll()
-                    }
-                    Button("Cancel", role: .cancel) {
-                        deleteConfirmation = false
-                    }
-                }
             }
             .padding([.leading, .trailing], 20)
             .padding([.top, .bottom], 10)
-            
             .onChange(of: name) {
                 // Removes any leading whitespaces and limits input to letters and spaces
                 name.removeAll(where: { !($0.isLetter || $0.isWhitespace) })
@@ -149,7 +149,8 @@ struct ModifyRecipientView: View {
             .toolbar() {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        if (name != recipient.name || interests != recipient.interests || (addBirthday && (birthmonth != recipient.birthmonth || birthday != recipient.birthday) || (!addBirthday && recipient.birthday != nil))) {
+                        // TODO: Do checks to see if confirmation is needed
+                        if (true) {
                             cancelConfirmation = true
                         } else {
                             dismiss()
@@ -165,32 +166,11 @@ struct ModifyRecipientView: View {
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        // Required to push changes to prior views
-                        settings.objectWillChange.send()
-                        recipient.name = name
-                        if addBirthday {
-                            recipient.birthmonth = birthmonth
-                            recipient.birthday = birthday
-                        } else {
-                            recipient.birthmonth = nil
-                            recipient.birthday = nil
-                        }
-                        recipient.interests = interests
-
-                        settings.saveChanges()
-                        dismiss()
-                    }.disabled(name.count == 0)
+                    Button("Save", action: save).disabled(name.count == 0)
                 }
             }
         }.onAppear() {
-            name = recipient.name
-            if recipient.birthmonth != nil && recipient.birthday != nil {
-                addBirthday = true
-                birthmonth = recipient.birthmonth!
-                birthday = recipient.birthday!
-            }
-            interests = recipient.interests
+            name = appController.userViewModel?.user?.name ?? ""
         }
     }
 }

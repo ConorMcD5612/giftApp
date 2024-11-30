@@ -204,5 +204,4 @@ class CalendarViewModel: ObservableObject {
         self.giftsDisplayed = []
         self.selectedDateCal = Date()
     }
-    
 }

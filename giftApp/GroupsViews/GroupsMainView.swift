@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GroupsMainView: View {
+    @EnvironmentObject var appController: AppController
     @EnvironmentObject var settings: GroupsViewModel
     @State var searchEntry: String = ""
     
@@ -15,6 +16,9 @@ struct GroupsMainView: View {
         NavigationStack(path: $settings.path) {
             VStack {
                 HStack {
+                    Button("", systemImage: "person.crop.circle") {
+                        settings.path.append(.profileView)
+                    }
                     Text("Your Groups")
                     Spacer()
                     Button("+") {
@@ -41,10 +45,18 @@ struct GroupsMainView: View {
                 
                 Spacer()
             }
+            .navigationDestination(for: GroupsViewModel.Views.self) { view in
+                switch view {
+                case .profileView:
+                    ProfileView()
+                case .editProfileView:
+                    EditProfileView()
+                }
+            }
         }
     }
 }
 
 #Preview {
-    GroupsMainView().environmentObject(GroupsViewModel())
+    GroupsMainView().environmentObject(GroupsViewModel()).environmentObject(AppController())
 }

@@ -9,7 +9,7 @@ import SwiftUICore
 
 class GroupsViewModel: ObservableObject {
     enum Views {
-        case placeholder
+        case profileView, editProfileView
     }
     
     @Published var groups: [Recipient]
