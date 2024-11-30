@@ -82,12 +82,12 @@ struct ModifyRecipientView: View {
                     if (addBirthday) {
                         HStack {
                             HStack {
-                                Picker(selection: $birthmonth, label: Text("Test")) {
+                                Picker(selection: $birthmonth, label: EmptyView()) {
                                     ForEach(VALID_MONTHS, id: \.self) {
                                         Text($0)
                                     }
                                 }
-                                Picker(selection: $birthday, label: Text("Test2")) {
+                                Picker(selection: $birthday, label: EmptyView()) {
                                     ForEach(VALID_DAYS[birthmonth] ?? [], id: \.self) {
                                         Text("\($0)")
                                         
@@ -98,7 +98,7 @@ struct ModifyRecipientView: View {
                                     .foregroundStyle(.gray)
                                     .opacity(0.2)
                             )
-                            Button("Delete", role: .destructive) {
+                            Button("Remove", role: .destructive) {
                                 addBirthday = false
                             }
                             Spacer()
@@ -151,7 +151,7 @@ struct ModifyRecipientView: View {
             .toolbar() {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        if (name != recipient.name || interests != recipient.interests || addBirthday && (birthmonth != recipient.birthmonth || birthday != recipient.birthday)) {
+                        if (name != recipient.name || interests != recipient.interests || (addBirthday && (birthmonth != recipient.birthmonth || birthday != recipient.birthday) || (!addBirthday && recipient.birthday != nil))) {
                             cancelConfirmation = true
                         } else {
                             dismiss()

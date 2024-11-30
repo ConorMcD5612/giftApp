@@ -16,9 +16,11 @@ struct ModifyGiftIdeaView: View {
     @Binding var giftIdea: RecipientGiftIdea
 
     @State var name: String = ""
+    @State var giftingDate: Date = Date()
     @State var description: String = ""
     @State var link: String = ""
     
+    @State var expectedGiftingDate: Bool = false
     @State var cancelConfirmation: Bool = false
     @State var deleteConfirmation: Bool = false
         
@@ -36,6 +38,33 @@ struct ModifyGiftIdeaView: View {
                     Spacer()
                 }
             }
+            Divider()
+            
+            VStack(spacing: 5) {
+                HStack {
+                    Text("Gifting Date")
+                        .font(.system(size: 20))
+                    Spacer()
+                }
+                if (expectedGiftingDate) {
+                    HStack {
+                        DatePicker("", selection: $giftingDate, displayedComponents: .date)
+                            .frame(width: 135)
+                        Button("Remove", role: .destructive) {
+                            expectedGiftingDate = false
+                        }
+                        Spacer()
+                    }
+                } else {
+                    HStack {
+                        Button("Add") {
+                            expectedGiftingDate = true
+                        }
+                        Spacer()
+                    }
+                }
+            }.padding([.top])
+            
             Divider()
             StyledTextField(title: "Link", text: "Enter link here", entry: $link, autoCapitalization: UITextAutocapitalizationType.none)
             
@@ -71,7 +100,7 @@ struct ModifyGiftIdeaView: View {
         .toolbar() {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
-                    if (name != giftIdea.name || link != giftIdea.link || description != giftIdea.description) {
+                    if (name != giftIdea.name || link != giftIdea.link || description != giftIdea.description || expectedGiftingDate && giftingDate != giftIdea.giftingDate || !expectedGiftingDate && giftIdea.giftingDate != nil) {
                         cancelConfirmation = true
                     } else {
                         dismiss()
@@ -89,6 +118,11 @@ struct ModifyGiftIdeaView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     giftIdea.name = name
+                    if expectedGiftingDate {
+                        giftIdea.giftingDate = giftingDate
+                    } else {
+                        giftIdea.giftingDate = nil
+                    }
                     giftIdea.link = link
                     giftIdea.description = description
                     settings.saveChanges()
@@ -98,6 +132,10 @@ struct ModifyGiftIdeaView: View {
         }
         .onAppear() {
             name = giftIdea.name
+            if (giftIdea.giftingDate != nil) {
+                expectedGiftingDate = true
+                giftingDate = giftIdea.giftingDate!
+            }
             link = giftIdea.link
             description = giftIdea.description
         }

@@ -13,10 +13,12 @@ struct AddGiftIdeaView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State var name: String = ""
+    @State var giftingDate: Date = Date()
     @State var description: String = ""
     @State var link: String = ""
     
     @State var confirmation: Bool = false
+    @State var expectedGiftingDate: Bool = false
     
     @Binding var recipient: Recipient
     
@@ -34,6 +36,34 @@ struct AddGiftIdeaView: View {
                     Spacer()
                 }
             }
+            
+            Divider()
+            
+            VStack(spacing: 5) {
+                HStack {
+                    Text("Gifting Date")
+                        .font(.system(size: 20))
+                    Spacer()
+                }
+                if (expectedGiftingDate) {
+                    HStack {
+                        DatePicker("", selection: $giftingDate, displayedComponents: .date)
+                            .frame(width: 135)
+                        Button("Remove", role: .destructive) {
+                            expectedGiftingDate = false
+                        }
+                        Spacer()
+                    }
+                } else {
+                    HStack {
+                        Button("Add") {
+                            expectedGiftingDate = true
+                        }
+                        Spacer()
+                    }
+                }
+            }.padding([.top])
+            
             Divider()
             StyledTextField(title: "Link", text: "Enter link here", entry: $link, autoCapitalization: UITextAutocapitalizationType.none)
             
@@ -84,7 +114,7 @@ struct AddGiftIdeaView: View {
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
-                    recipient.giftIdeas.append(RecipientGiftIdea(name: name, description: description, link: link, creationDate: Date.now, giftingDate: nil))
+                    recipient.giftIdeas.append(RecipientGiftIdea(name: name, description: description, link: link, creationDate: Date.now, giftingDate: expectedGiftingDate ? giftingDate : nil))
                     settings.saveChanges()
                     dismiss()
                 }.disabled(name.count == 0)

@@ -26,6 +26,14 @@ struct GiftIdeaView: View {
                 Spacer()
             }
             
+            if (giftIdea.giftingDate != nil) {
+                HStack {
+                    Text("To be gifted on \(giftIdea.giftingDate!.formatted(date: .abbreviated, time: .omitted))")
+                        .font(.system(size: 20))
+                    Spacer()
+                }
+            }
+            
             if (giftIdea.link.count > 0) {
                 HStack {
                     Link("Link to Gift", destination: URL(string: giftIdea.link)!)
