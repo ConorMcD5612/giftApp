@@ -15,14 +15,16 @@ struct MainView: View {
     @StateObject var calendarViewModel: CalendarViewModel = CalendarViewModel()
     @State var signedIn = (Auth.auth().currentUser != nil)
     
+    @State var selection: Int = 0
+    
     var body: some View {
         VStack {
-            TabView {
+            TabView(selection: $selection) {
                 PersonalMainView().environmentObject(personalViewModel)
                 .tabItem {
                     Image(systemName: "person")
                     Text("Personal Ideas")
-                }
+                }.tag(0)
                 
                 // If not signed in, trying to go to the groups view leads to the sign in page
                 if signedIn {
@@ -32,22 +34,23 @@ struct MainView: View {
                     .tabItem {
                         Image(systemName: "person.2")
                         Text("Groups")
-                    }
+                    }.tag(1)
                 } else {
                     AuthView()
                     .tabItem {
                         Image(systemName: "person.2")
                         Text("Groups")
-                    }
+                    }.tag(1)
                 }
                 
                 CalendarMainView().environmentObject(calendarViewModel)
                 .tabItem {
                     Image(systemName: "calendar")
                     Text("Calendar")
-                }
+                }.tag(2)
             }
-        }.onAppear {
+        }
+        .onAppear {
             Task {
                 try await appController.initUserData()
             }
@@ -55,6 +58,9 @@ struct MainView: View {
             _ = Auth.auth().addStateDidChangeListener {auth, user in
                 signedIn = user != nil ? true : false
             }
+        }
+        .onChange(of: signedIn) {
+            groupsViewModel.path.removeAll()
         }
     }
 }

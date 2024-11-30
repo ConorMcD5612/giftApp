@@ -16,16 +16,16 @@ class User: Codable, Identifiable {
     var birthmonth: String?
     var birthday: Int?
     
-    var wishlist: [String]?
-    var interests: [String]?
+    var wishlist: [String]
+    var about: String
     
-    init(id: String?, name: String, email: String, birthmonth: String?, birthday: Int?) {
+    init(id: String?, name: String, email: String, birthmonth: String?, birthday: Int?, wishlist: [String], about: String) {
         self.id = id
         self.name = name
         self.email = email
         self.birthmonth = birthmonth
         self.birthday = birthday
-        self.wishlist = []
-        self.interests = []
+        self.wishlist = wishlist
+        self.about = about
     }
 }

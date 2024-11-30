@@ -13,6 +13,8 @@ struct EmailPassView: View {
     @Binding var signingUp: Bool
     
     @State var name: String = ""
+    @State var email: String = ""
+    @State var password: String = ""
     @State var errorMessage: String = ""
     
     var body: some View {
@@ -44,14 +46,14 @@ struct EmailPassView: View {
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Email Address")
-                    TextField("", text: $appController.username)
+                    TextField("", text: $email)
                         .autocapitalization(.none)
                         .autocorrectionDisabled()
                 }
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Password")
-                    SecureField("", text: $appController.password)
+                    SecureField("", text: $password)
                         .autocapitalization(.none)
                 }
                 
@@ -73,6 +75,8 @@ struct EmailPassView: View {
     }
     
     func signIn() {
+        appController.email = email
+        appController.password = password
         Task {
             do {
                 try await appController.signIn()
@@ -84,9 +88,11 @@ struct EmailPassView: View {
     }
     
     func signUp() {
+        appController.email = email
+        appController.password = password
         Task {
             do {
-                try await appController.signUp(name: name, email: appController.username, password: appController.password)
+                try await appController.signUp(name: name, email: email, password: password)
             } catch {
                 errorMessage = error.localizedDescription
                 print(error.localizedDescription)

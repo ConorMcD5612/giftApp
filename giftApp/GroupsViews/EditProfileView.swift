@@ -17,7 +17,10 @@ struct EditProfileView: View {
     @State var birthmonth: String = "January"
     @State var birthday: Int = 1
     
-    @State var interests: [String] = []
+    @State var wishlistItem: String = ""
+    @State var wishlist: [String] = []
+    
+    @State var about: String = ""
         
     @State var addBirthday: Bool = false
     @State var cancelConfirmation: Bool = false
@@ -53,6 +56,9 @@ struct EditProfileView: View {
             appController.userViewModel?.user?.birthday = nil
         }
         
+        appController.userViewModel?.user?.wishlist = wishlist
+        appController.userViewModel?.user?.about = about
+        
         Task {
             do {
                 try await appController.userViewModel?.saveUserData()
@@ -63,122 +69,166 @@ struct EditProfileView: View {
         dismiss()
     }
     
-    var body: some View {
-        VStack {
-            // User icon; uses first initial
-            // Potentially add support for users to upload
-            // a custom image for a person
-            ZStack {
-                Circle().frame(width: 150, height: 150)
-                    .foregroundStyle(.teal)
-                Text("\(name.prefix(1).uppercased())")
-                    .font(.largeTitle)
-                    .foregroundStyle(.white)
-                    .bold()
-            }.padding([.top, .bottom])
-                        
-            VStack(spacing: 10) {
-                VStack(spacing: 0) {
-                    StyledTextField(title: "Name", text: "Enter name here", entry: $name, characterLimit: MAX_NAME_LENGTH, hideLimit: false, autoCapitalization: UITextAutocapitalizationType.words)
-                    HStack {
-                        Text("Required")
-                            .font(.system(size: 16))
-                            .foregroundStyle(.gray)
-                        Spacer()
-                    }
-                }
-                Divider()
-                
-                VStack(spacing: 5) {
-                    HStack {
-                        Text("Birthday")
-                            .font(.system(size: 20))
-                        Spacer()
-                    }
-                    if (addBirthday) {
-                        HStack {
-                            HStack {
-                                Picker(selection: $birthmonth, label: EmptyView()) {
-                                    ForEach(VALID_MONTHS, id: \.self) {
-                                        Text($0)
-                                    }
-                                }
-                                Picker(selection: $birthday, label: EmptyView()) {
-                                    ForEach(VALID_DAYS[birthmonth] ?? [], id: \.self) {
-                                        Text("\($0)")
-                                    }
-                                }
-                            }.overlay(
-                                RoundedRectangle(cornerRadius: 5)
-                                    .foregroundStyle(.gray)
-                                    .opacity(0.2)
-                            )
-                            Button("Remove", role: .destructive) {
-                                addBirthday = false
-                            }
-                            Spacer()
-                        }
-                    } else {
-                        HStack {
-                            Button("Add") {
-                                addBirthday = true
-                            }
-                            Spacer()
-                        }
-                    }
-                }
-                
-                Divider()
-                
-                // TODO: Add place to insert wishlist items
-                
-                Divider()
-                
-                // TODO: Add place to insert interests
-                
-                Spacer()
+    func wishlistString() -> String {
+        var string = ""
+        
+        for item in wishlist {
+            string += item
+            if (wishlist.count > 1 && wishlist.last != item) {
+                string += ", "
             }
-            .padding([.leading, .trailing], 20)
-            .padding([.top, .bottom], 10)
-            .onChange(of: name) {
-                // Removes any leading whitespaces and limits input to letters and spaces
-                name.removeAll(where: { !($0.isLetter || $0.isWhitespace) })
-                name = String(
+        }
+        
+        return string
+    }
+    
+    var body: some View {
+        ScrollView {
+            VStack {
+                // User icon; uses first initial
+                // Potentially add support for users to upload
+                // a custom image for a person
+                ZStack {
+                    Circle().frame(width: 150, height: 150)
+                        .foregroundStyle(.teal)
+                    Text("\(name.prefix(1).uppercased())")
+                        .font(.largeTitle)
+                        .foregroundStyle(.white)
+                        .bold()
+                }.padding([.top, .bottom])
+                
+                VStack(spacing: 10) {
+                    VStack(spacing: 0) {
+                        StyledTextField(title: "Name", text: "Enter name here", entry: $name, characterLimit: MAX_NAME_LENGTH, hideLimit: false, autoCapitalization: UITextAutocapitalizationType.words)
+                        HStack {
+                            Text("Required")
+                                .font(.system(size: 16))
+                                .foregroundStyle(.gray)
+                            Spacer()
+                        }
+                    }
+                    Divider()
+                    
+                    VStack(spacing: 5) {
+                        HStack {
+                            Text("Birthday")
+                                .font(.system(size: 20))
+                            Spacer()
+                        }
+                        if (addBirthday) {
+                            HStack {
+                                HStack {
+                                    Picker(selection: $birthmonth, label: EmptyView()) {
+                                        ForEach(VALID_MONTHS, id: \.self) {
+                                            Text($0)
+                                        }
+                                    }
+                                    Picker(selection: $birthday, label: EmptyView()) {
+                                        ForEach(VALID_DAYS[birthmonth] ?? [], id: \.self) {
+                                            Text("\($0)")
+                                        }
+                                    }
+                                }.overlay(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .foregroundStyle(.gray)
+                                        .opacity(0.2)
+                                )
+                                Button("Remove", role: .destructive) {
+                                    addBirthday = false
+                                }
+                                Spacer()
+                            }
+                        } else {
+                            HStack {
+                                Button("Add") {
+                                    addBirthday = true
+                                }
+                                Spacer()
+                            }
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    VStack(spacing: 5) {
+                        HStack {
+                            Text("Wishlist")
+                                .font(.system(size: 20))
+                            Spacer()
+                        }
+                        if (wishlist.count != 0) {
+                            HStack(spacing: 0) {
+                                ScrollView {
+                                    Text(wishlistString())
+                                }.frame(height: 50)
+                                Spacer()
+                            }.font(.system(size: 20))
+                        }
+                        HStack {
+                            StyledTextField(text: "Enter item here", entry: $wishlistItem, characterLimit: 64)
+                                .frame(width: 180)
+                            Button("Add") {
+                                if (wishlistItem != "" && !wishlist.contains(wishlistItem)) {
+                                    wishlist.append(wishlistItem)
+                                    wishlistItem = ""
+                                }
+                            }
+                            Button("Remove", role: .destructive) {
+                                wishlist.removeAll(where: {$0 == wishlistItem})
+                                wishlistItem = ""
+                            }
+                            Spacer()
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    StyledTextEditor(title: "About", entry: $about, characterLimit: 320)
+                    
+                    Spacer()
+                }
+                .padding([.leading, .trailing], 20)
+                .padding([.top, .bottom], 10)
+                .onChange(of: name) {
+                    // Removes any leading whitespaces and limits input to letters and spaces
+                    name.removeAll(where: { !($0.isLetter || $0.isWhitespace) })
+                    name = String(
                         name[(name.firstIndex(where: { !$0.isWhitespace }) ?? name.startIndex)...]
                     )
-            }
-            .onChange(of: birthmonth) {
-                if !VALID_DAYS[birthmonth]!.contains(birthday) {
-                    birthday = 1
                 }
-            }
-            .navigationBarBackButtonHidden()
-            .toolbarTitleDisplayMode(.inline)
-            .toolbar() {
-                ToolbarItem(placement: .principal) {
-                    Text("Editing Profile").font(.headline)
-                }
-                
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        // TODO: Do checks to see if confirmation is needed
-                        if (name != appController.userViewModel?.user?.name || (addBirthday && (birthday != appController.userViewModel?.user?.birthday || birthmonth != appController.userViewModel?.user?.birthmonth))) {
-                            cancelConfirmation = true
-                        } else {
-                            dismiss()
-                        }
-                    }.confirmationDialog("Are you sure you want to discard these changes?", isPresented: $cancelConfirmation, titleVisibility: .visible) {
-                        Button("Discard Changes", role: .destructive) {
-                            cancelConfirmation = false
-                            dismiss()
-                        }
-                        Button("Cancel", role: .cancel) {
-                            cancelConfirmation = false
-                        }
+                .onChange(of: birthmonth) {
+                    if !VALID_DAYS[birthmonth]!.contains(birthday) {
+                        birthday = 1
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save).disabled(name.count == 0)
+                .navigationBarBackButtonHidden()
+                .toolbarTitleDisplayMode(.inline)
+                .toolbar() {
+                    ToolbarItem(placement: .principal) {
+                        Text("Editing Profile").font(.headline)
+                    }
+                    
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            // TODO: Do checks to see if confirmation is needed
+                            if (name != appController.userViewModel?.user?.name || (addBirthday && (birthday != appController.userViewModel?.user?.birthday || birthmonth != appController.userViewModel?.user?.birthmonth))) {
+                                cancelConfirmation = true
+                            } else {
+                                dismiss()
+                            }
+                        }.confirmationDialog("Are you sure you want to discard these changes?", isPresented: $cancelConfirmation, titleVisibility: .visible) {
+                            Button("Discard Changes", role: .destructive) {
+                                cancelConfirmation = false
+                                dismiss()
+                            }
+                            Button("Cancel", role: .cancel) {
+                                cancelConfirmation = false
+                            }
+                        }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save", action: save).disabled(name.count == 0)
+                    }
                 }
             }
         }.onAppear() {
@@ -188,6 +238,15 @@ struct EditProfileView: View {
             }
             birthmonth = appController.userViewModel?.user?.birthmonth ?? "January"
             birthday = appController.userViewModel?.user?.birthday ?? 1
+            wishlist = appController.userViewModel?.user?.wishlist ?? []
+            about = appController.userViewModel?.user?.about ?? ""
         }
     }
+}
+
+#Preview {
+    Text("Expect no data to load in this preview")
+        .font(.headline)
+        .foregroundStyle(.red)
+    EditProfileView().environmentObject(AppController()).environmentObject(GroupsViewModel())
 }

@@ -32,7 +32,7 @@ class PersonalViewModel: ObservableObject {
         if loadFromFile {
             let fileManager = FileManager.default
             if fileManager.fileExists(atPath: personalGiftIdeasArchive.path) {
-                print("load from \(personalGiftIdeasArchive.path)")
+                print("loading data from system")
                 self.recipients = load(personalGiftIdeasArchive)
             } else {
                 print("no file found")
@@ -55,7 +55,7 @@ class PersonalViewModel: ObservableObject {
             let encoder = JSONEncoder()
             let data = try encoder.encode(recipients)
         try data.write(to: personalGiftIdeasArchive, options: [.atomic])
-            print("saved data to \(personalGiftIdeasArchive)")
+            print("saved data to system")
             return true
         } catch let encodingError {
             print("Error encoding allItems: \(encodingError)")

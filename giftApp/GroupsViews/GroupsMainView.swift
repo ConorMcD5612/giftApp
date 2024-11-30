@@ -54,6 +54,11 @@ struct GroupsMainView: View {
                 }
             }
         }
+        .onAppear {
+            Task {
+                try await appController.initUserData()
+            }
+        }
     }
 }
 

@@ -15,8 +15,7 @@ import Firebase
 class AppController: ObservableObject {
     @Published var userViewModel: UserViewModel?;
     
-    //username will just be email for now
-    var username: String = ""
+    var email: String = ""
     var password: String = ""
     
     
@@ -55,7 +54,7 @@ class AppController: ObservableObject {
                     "name": googleUserData?.givenName ?? "",
                     "email": googleUserData?.email ?? "",
                     "wishlist": [],
-                    "interests": []
+                    "about": []
                 ])
             }
             print("Gsignin worked")
@@ -67,10 +66,18 @@ class AppController: ObservableObject {
     func GSignOut() throws {
         GIDSignIn.sharedInstance.signOut()
         try Auth.auth().signOut()
+        email = ""
+        password = ""
+        userViewModel?.user?.name = ""
+        userViewModel?.user?.email = ""
+        userViewModel?.user?.birthmonth = nil
+        userViewModel?.user?.birthday = nil
+        userViewModel?.user?.wishlist = []
+        userViewModel?.user?.about = ""
     }
     
     func signIn() async throws{
-        try await Auth.auth().signIn(withEmail: username, password: password)
+        try await Auth.auth().signIn(withEmail: email, password: password)
     }
     
     func signUp(name: String, email: String, password: String) async throws {
@@ -88,12 +95,8 @@ class AppController: ObservableObject {
             "name": name,
             "email": email,
             "wishlist": [],
-            "interests": []
+            "about": ""
         ])
-    }
-    
-    func signOut() throws {
-        try Auth.auth().signOut()
     }
     
     //call this after signing in
@@ -102,6 +105,7 @@ class AppController: ObservableObject {
         
         do {
             try await userViewModel.fetchUserData()
+            self.objectWillChange.send()
         } catch {
             print("initUserData failed")
         }
