@@ -11,7 +11,7 @@ struct GroupsMainView: View {
     @EnvironmentObject var appController: AppController
     @EnvironmentObject var settings: GroupsViewModel
     @State var searchEntry: String = ""
-    
+        
     var body: some View {
         NavigationStack(path: $settings.path) {
             VStack {

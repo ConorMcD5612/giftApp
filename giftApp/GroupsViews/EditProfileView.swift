@@ -210,8 +210,7 @@ struct EditProfileView: View {
                     
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {
-                            // TODO: Do checks to see if confirmation is needed
-                            if (name != appController.userViewModel?.user?.name || (addBirthday && (birthday != appController.userViewModel?.user?.birthday || birthmonth != appController.userViewModel?.user?.birthmonth))) {
+                            if (name != appController.userViewModel?.user?.name || (addBirthday && (birthday != appController.userViewModel?.user?.birthday || birthmonth != appController.userViewModel?.user?.birthmonth)) || wishlist != appController.userViewModel?.user?.wishlist || about != appController.userViewModel?.user?.about) {
                                 cancelConfirmation = true
                             } else {
                                 dismiss()

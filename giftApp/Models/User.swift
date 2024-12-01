@@ -19,7 +19,9 @@ class User: Codable, Identifiable {
     var wishlist: [String]
     var about: String
     
-    init(id: String?, name: String, email: String, birthmonth: String?, birthday: Int?, wishlist: [String], about: String) {
+    var groups: [String]
+    
+    init(id: String? = nil, name: String, email: String, birthmonth: String? = nil, birthday: Int? = nil, wishlist: [String] = [], about: String = "", groups: [String] = []) {
         self.id = id
         self.name = name
         self.email = email
@@ -27,5 +29,6 @@ class User: Codable, Identifiable {
         self.birthday = birthday
         self.wishlist = wishlist
         self.about = about
+        self.groups = groups
     }
 }

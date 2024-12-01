@@ -40,22 +40,18 @@ class AppController: ObservableObject {
             //need to sign in first for auth rules
             try await Auth.auth().signIn(with: credential)
             
-            
             //put gUserData in firestore
             let db = Firestore.firestore()
             guard let UID = Auth.auth().currentUser?.uid else {return}
-            let query = db.collection("users").document(UID)
             
+            print("LOGIN ID: \(UID)")
+            
+            let query = db.collection("users").document(UID)
             
             let document = try await query.getDocument()
             
             if !document.exists {
-                try await db.collection("users").document(UID).setData([
-                    "name": googleUserData?.givenName ?? "",
-                    "email": googleUserData?.email ?? "",
-                    "wishlist": [],
-                    "about": []
-                ])
+                try db.collection("users").document(UID).setData(from: User(id: nil, name: googleUserData?.givenName ?? "", email: googleUserData?.email ?? ""))
             }
             print("Gsignin worked")
         } catch {
@@ -66,14 +62,6 @@ class AppController: ObservableObject {
     func GSignOut() throws {
         GIDSignIn.sharedInstance.signOut()
         try Auth.auth().signOut()
-        email = ""
-        password = ""
-        userViewModel?.user?.name = ""
-        userViewModel?.user?.email = ""
-        userViewModel?.user?.birthmonth = nil
-        userViewModel?.user?.birthday = nil
-        userViewModel?.user?.wishlist = []
-        userViewModel?.user?.about = ""
     }
     
     func signIn() async throws{
@@ -91,12 +79,7 @@ class AppController: ObservableObject {
         guard let UID = Auth.auth().currentUser?.uid else {return}
         
         //create new user document
-        try await db.collection("users").document(UID).setData([
-            "name": name,
-            "email": email,
-            "wishlist": [],
-            "about": ""
-        ])
+        try db.collection("users").document(UID).setData(from: User(id: nil, name: name, email: email))
     }
     
     //call this after signing in
@@ -105,7 +88,6 @@ class AppController: ObservableObject {
         
         do {
             try await userViewModel.fetchUserData()
-            self.objectWillChange.send()
         } catch {
             print("initUserData failed")
         }

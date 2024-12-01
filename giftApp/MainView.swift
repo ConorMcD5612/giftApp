@@ -51,9 +51,6 @@ struct MainView: View {
             }
         }
         .onAppear {
-            Task {
-                try await appController.initUserData()
-            }
             // _ used to silence warning for unused var from addStateDidChangeListener
             _ = Auth.auth().addStateDidChangeListener {auth, user in
                 signedIn = user != nil ? true : false

@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct GiftIdea: Codable, Identifiable {
+class GiftIdea: Codable, Identifiable {
     var id = UUID()
     var recipName: String
     var date: Date

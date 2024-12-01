@@ -21,7 +21,7 @@ class UserViewModel: ObservableObject {
             print("user not authenticated")
             return
         }
-        print("\(UID)")
+        print("ID: \(UID)")
         let query = db.collection("users").document(UID)
         
         do {
@@ -32,9 +32,6 @@ class UserViewModel: ObservableObject {
                 print("User data acquired for \(self.user?.email ?? "email not found")")
             } else {
                 print("userDocument does not exist / does not match")
-                try await Auth.auth().currentUser?.delete()
-                try Auth.auth().signOut()
-                
             }
         } catch {
             print("fetch user data error")
@@ -51,15 +48,7 @@ class UserViewModel: ObservableObject {
         let query = db.collection("users").document(UID)
         
         do {
-            //write timestamp field based on date selected
-            //DateswithGifts->array->giftIdea (
-            try await query.setData([
-                "name": user!.name,
-                "birthmonth": user!.birthmonth as Any,
-                "birthday": user!.birthday as Any,
-                "wishlist": user!.wishlist as Any,
-                "about": user!.about
-            ], merge: true)
+            try query.setData(from: user, merge: true)
             print("User data saved")
         } catch {
             print("Error with setting giftIdea")
