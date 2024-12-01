@@ -19,6 +19,7 @@ struct EditProfileView: View {
     
     @State var wishlistItem: String = ""
     @State var wishlist: [String] = []
+    @State var alreadyAddedItem: Bool = false
     
     @State var about: String = ""
         
@@ -157,27 +158,40 @@ struct EditProfileView: View {
                             Spacer()
                         }
                         if (wishlist.count != 0) {
-                            HStack(spacing: 0) {
-                                ScrollView {
-                                    Text(wishlistString())
-                                }.frame(height: 50)
-                                Spacer()
+                            ForEach(wishlist, id: \.self) { item in
+                                HStack(spacing: 0) {
+                                    Text("- \(item)")
+                                    Spacer()
+                                }
                             }.font(.system(size: 20))
                         }
                         HStack {
                             StyledTextField(text: "Enter item here", entry: $wishlistItem, characterLimit: 64)
                                 .frame(width: 180)
                             Button("Add") {
+                                alreadyAddedItem = false
                                 if (wishlistItem != "" && !wishlist.contains(wishlistItem)) {
-                                    wishlist.append(wishlistItem)
+                                    let index = wishlist.firstIndex(where: {$0 > wishlistItem})
+                                    wishlist.insert(wishlistItem, at: index ?? wishlist.endIndex)
                                     wishlistItem = ""
+                                } else {
+                                    alreadyAddedItem = true
                                 }
                             }
                             Button("Remove", role: .destructive) {
+                                alreadyAddedItem = false
                                 wishlist.removeAll(where: {$0 == wishlistItem})
                                 wishlistItem = ""
                             }
                             Spacer()
+                        }
+                        if (alreadyAddedItem) {
+                            HStack {
+                                Text("Item already added to wishlist!")
+                                    .foregroundStyle(.red)
+                                    .font(.system(size: 16))
+                                Spacer()
+                            }
                         }
                     }
                     
@@ -230,7 +244,9 @@ struct EditProfileView: View {
                     }
                 }
             }
-        }.onAppear() {
+        }
+        .scrollBounceBehavior(.basedOnSize)
+        .onAppear() {
             name = appController.userViewModel?.user?.name ?? ""
             if (appController.userViewModel?.user?.birthmonth != nil) {
                 addBirthday = true

@@ -51,7 +51,7 @@ class AppController: ObservableObject {
             let document = try await query.getDocument()
             
             if !document.exists {
-                try db.collection("users").document(UID).setData(from: User(id: nil, name: googleUserData?.givenName ?? "", email: googleUserData?.email ?? ""))
+                try db.collection("users").document(UID).setData(from: User(uid: nil, name: googleUserData?.givenName ?? "", email: googleUserData?.email ?? ""))
             }
             print("Gsignin worked")
         } catch {
@@ -79,7 +79,7 @@ class AppController: ObservableObject {
         guard let UID = Auth.auth().currentUser?.uid else {return}
         
         //create new user document
-        try db.collection("users").document(UID).setData(from: User(id: nil, name: name, email: email))
+        try db.collection("users").document(UID).setData(from: User(uid: nil, name: name, email: email))
     }
     
     //call this after signing in

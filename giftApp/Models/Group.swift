@@ -18,7 +18,7 @@ class Group: Codable {
     
     var memberGiftideas: [String: [GroupGiftIdea]]
     
-    init(id: String? = nil, name: String, owner: String, members: [String], memberGiftideas: [String: [GroupGiftIdea]]) {
+    init(id: String? = nil, name: String, owner: String, members: [String], memberGiftideas: [String: [GroupGiftIdea]] = [:]) {
         self.id = id
         self.name = name
         self.ownerID = owner

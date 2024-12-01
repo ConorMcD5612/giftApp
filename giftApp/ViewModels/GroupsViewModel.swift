@@ -12,7 +12,7 @@ import FirebaseFirestore
 
 class GroupsViewModel: ObservableObject {
     enum Views {
-        case profileView, editProfileView
+        case profileView, editProfileView, createGroupView
     }
     
     @Published var groups: [Group]
@@ -47,31 +47,40 @@ class GroupsViewModel: ObservableObject {
         return nil
     }
     
-    func createGroup(group: Group) async throws {
-        
+    func createGroup(group: Group) {
+        let db = Firestore.firestore()
+        do {
+            let groupRef = try db.collection("groups").addDocument(from: group)
+            for memberID in group.members {
+                let userRef = db.collection("users").document(memberID)
+                userRef.updateData([
+                    "groups": FieldValue.arrayUnion([groupRef])
+                ])
+            }
+        } catch {
+            print("failed to create group document")
+        }
     }
     
     func getGroupData(user: User) async throws {
         let db = Firestore.firestore()
         
-        for groupID in user.groups {
-            let query = db.collection("groups").document(groupID)
-            
+        for groupRef in user.groups {
             do {
-                let document = try await query.getDocument()
+                let document = try await groupRef.getDocument()
                 if let groupData = try? document.data(as: Group.self) {
                     groups.append(groupData)
                 } else {
-                    print("document for group \(groupID) does not exist / does not match :'(")
+                    print("document for group does not exist / does not match :'(")
                 }
             } catch {
                 print("fetch group data error")
             }
         }
-        
+                
         for group in groups {
             for memberID in group.members {
-                if visibleUsers[user.id!] == nil && memberID != user.id {
+                if visibleUsers[memberID] == nil && memberID != user.id {
                     let query = db.collection("users").document(memberID)
                     
                     do {
@@ -87,5 +96,6 @@ class GroupsViewModel: ObservableObject {
                 }
             }
         }
+        print("Count: \(visibleUsers.count)")
     }
 }

@@ -75,10 +75,6 @@ struct AddRecipientView: View {
                 }
                 Divider()
                 
-                VStack {
-                    
-                }
-                
                 VStack(spacing: 5) {
                     HStack {
                         Text("Birthday")

@@ -22,7 +22,7 @@ struct GroupsMainView: View {
                     Text("Your Groups")
                     Spacer()
                     Button("+") {
-                        // TODO: Move to group creation screen
+                        settings.path.append(.createGroupView)
                     }
                 }.font(.largeTitle)
                 .padding([.leading, .trailing])
@@ -33,8 +33,9 @@ struct GroupsMainView: View {
                 ScrollView(showsIndicators: false) {
                     if (settings.groups.count > 0) {
                         VStack {
-//                            ForEach($settings.recipients, id: \.self.id)
-//                            }
+                            ForEach($settings.groups, id: \.self.id) { $group in
+                                TextButton(title: group.name)
+                            }
                         }
                     } else {
                         Text("You're not a member of any groups yet!")
@@ -51,12 +52,18 @@ struct GroupsMainView: View {
                     ProfileView()
                 case .editProfileView:
                     EditProfileView()
+                case .createGroupView:
+                    CreateGroupView()
                 }
             }
         }
         .onAppear {
             Task {
                 try await appController.initUserData()
+                let user: User? = appController.userViewModel?.user
+                if user != nil {
+                    try await settings.getGroupData(user: user!)
+                }
             }
         }
     }

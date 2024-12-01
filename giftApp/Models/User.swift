@@ -8,7 +8,7 @@
 import FirebaseFirestore
 //import Foundation
 
-class User: Codable, Identifiable {
+class User: Codable {
     @DocumentID var id: String?
     var name: String
     var email: String;
@@ -19,10 +19,10 @@ class User: Codable, Identifiable {
     var wishlist: [String]
     var about: String
     
-    var groups: [String]
+    var groups: [DocumentReference]
     
-    init(id: String? = nil, name: String, email: String, birthmonth: String? = nil, birthday: Int? = nil, wishlist: [String] = [], about: String = "", groups: [String] = []) {
-        self.id = id
+    init(uid: String? = nil, name: String, email: String, birthmonth: String? = nil, birthday: Int? = nil, wishlist: [String] = [], about: String = "", groups: [DocumentReference] = []) {
+        self.id = uid
         self.name = name
         self.email = email
         self.birthmonth = birthmonth
