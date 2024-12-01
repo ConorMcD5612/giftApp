@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct GiftIdeasListView: View {
+struct RecipientView: View {
     @EnvironmentObject var settings: PersonalViewModel
     
     @Binding var recipient: Recipient
@@ -64,7 +64,7 @@ struct GiftIdeasListView: View {
         }
         .toolbar() {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Edit Recipient") {
+                Button("Edit Group") {
                     settings.path.append(.editRecipient)
                 }
             }

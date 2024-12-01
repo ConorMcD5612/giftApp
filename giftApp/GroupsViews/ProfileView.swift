@@ -11,6 +11,7 @@ struct ProfileView: View {
     @EnvironmentObject var appController: AppController
     @EnvironmentObject var settings: GroupsViewModel
     @Environment(\.dismiss) private var dismiss
+    @State var signoutConfirmation: Bool = false
     
     func formatDate(date: Date) -> String {
         let formatter = DateFormatter()
@@ -109,7 +110,16 @@ struct ProfileView: View {
                 }
             }
             Button("Sign out", role: .destructive) {
-                GSignOut()
+                signoutConfirmation = true
+            }
+            .confirmationDialog("Are you sure you want to sign out?", isPresented: $signoutConfirmation, titleVisibility: .visible) {
+                Button("Sign out", role: .destructive) {
+                    signoutConfirmation = false
+                    GSignOut()
+                }
+                Button("Cancel", role: .cancel) {
+                    signoutConfirmation = false
+                }
             }
         }
         .font(.system(size: 20))

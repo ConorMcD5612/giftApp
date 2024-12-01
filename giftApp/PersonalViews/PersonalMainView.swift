@@ -58,7 +58,7 @@ struct PersonalMainView: View {
                 case .addRecipient:
                     AddRecipientView(recipients: $settings.recipients)
                 case .viewGiftIdeaList:
-                    GiftIdeasListView(recipient: $settings.selectedRecipient)
+                    RecipientView(recipient: $settings.selectedRecipient)
                 case .editRecipient:
                     EditRecipientView(recipient: $settings.selectedRecipient)
                 case .addGiftIdea:

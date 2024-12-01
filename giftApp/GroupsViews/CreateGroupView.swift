@@ -136,15 +136,15 @@ struct CreateGroupView: View {
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Create") {
-                    let ownerID: String = appController.userViewModel?.user?.id! ?? ""
+                    let creatorID: String = appController.userViewModel?.user?.id! ?? ""
                     var members: [String] = Array(members.values)
-                    members.append(ownerID)
+                    members.append(creatorID)
                     
-                    if ownerID == "" {
-                        print("Invalid ownerID")
+                    if creatorID == "" {
+                        print("creatorID DNE")
                         dismiss()
                     } else {
-                        settings.createGroup(group: Group(name: name, owner: ownerID, members: members))
+                        settings.createGroup(group: Group(name: name, members: members))
                         dismiss()
                     }
                 }.disabled(name.count == 0)

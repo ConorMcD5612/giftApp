@@ -80,7 +80,7 @@ struct EditGiftIdeaView: View {
                     deleteConfirmation = false
                     recipient.remove(giftIdea: giftIdea)
                     settings.saveChanges()
-                    // Returns to GiftIdeasListView for recipient
+                    // Returns to RecipientView for recipient
                     settings.path.removeLast(2)
                 }
                 Button("Cancel", role: .cancel) {

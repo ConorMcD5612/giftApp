@@ -12,19 +12,20 @@ import FirebaseFirestore
 
 class GroupsViewModel: ObservableObject {
     enum Views {
-        case profileView, editProfileView, createGroupView
+        case profileView, editProfileView, createGroupView, groupView, editGroupView
     }
     
-    @Published var groups: [Group]
+    @Published var groups: [String : Group]
     @Published var visibleUsers: [String : User]
     @Published var path: [Views]
-    @Published var selectedGroup: Group?
+    @Published var selectedGroup: Group
     
     init() {
-        self.groups = []
+        self.groups = [:]
         self.visibleUsers = [:]
         self.path = []
-        self.selectedGroup = nil
+        // Placeholder; never gets utilized; to avoid using optionals
+        self.selectedGroup = Group(name: "", members: [])
     }
     
     func getDocumentID(for email: String) async throws -> String? {
@@ -47,6 +48,37 @@ class GroupsViewModel: ObservableObject {
         return nil
     }
     
+    func getEmail(for id: String) async throws -> String? {
+        let db = Firestore.firestore()
+        let query = db.collection("users").document(id)
+        
+        do {
+            let document = try await query.getDocument()
+            if let userData = try? document.data(as: User.self) {
+                return userData.email
+            }
+        } catch {
+            print("Error fetching email for \(id)")
+        }
+        return nil
+    }
+    
+    func getMembers(from group: Group, currentUserID: String) -> String {
+        var string: String = ""
+                
+        for memberID in group.members {
+            if string.count != 0 && memberID != currentUserID {
+                string += ", "
+            }
+            
+            if memberID != currentUserID {
+                string += visibleUsers[memberID]?.name ?? ""
+            }
+        }
+        
+        return string
+    }
+    
     func createGroup(group: Group) {
         let db = Firestore.firestore()
         do {
@@ -62,6 +94,69 @@ class GroupsViewModel: ObservableObject {
         }
     }
     
+    func updateGroup(group: Group) async throws {
+        let db = Firestore.firestore()
+        do {
+            let groupRef = db.collection("groups").document(group.id!)
+            let document = try await groupRef.getDocument()
+            
+            if let origGroupData = try? document.data(as: Group.self) {
+                let origMembers = origGroupData.members
+                
+                for memberID in group.members {
+                    // User is being added to group
+                    if !origMembers.contains(memberID) {
+                        addMember(groupID: group.id!, memberID: memberID)
+                    }
+                }
+                
+                for memberID in origMembers {
+                    // User has been removed from group
+                    if !group.members.contains(memberID) {
+                        removeMember(groupID: group.id!, memberID: memberID)
+                    }
+                }
+            }
+            
+            try await groupRef.updateData([
+                "name": group.name,
+            ])
+            print("successfully updated group info")
+        } catch {
+            print("failed to update group document")
+        }
+    }
+    
+    func addMember(groupID: String, memberID: String) {
+        let db = Firestore.firestore()
+        
+        let groupRef = db.collection("groups").document(groupID)
+        let userRef = db.collection("users").document(memberID)
+        
+        groupRef.updateData([
+            "members": FieldValue.arrayUnion([memberID])
+        ])
+        
+        userRef.updateData([
+            "groups": FieldValue.arrayUnion([groupRef])
+        ])
+    }
+    
+    func removeMember(groupID: String, memberID: String) {
+        let db = Firestore.firestore()
+        
+        let groupRef = db.collection("groups").document(groupID)
+        let userRef = db.collection("users").document(memberID)
+        
+        groupRef.updateData([
+            "members": FieldValue.arrayRemove([memberID])
+        ])
+        
+        userRef.updateData([
+            "groups": FieldValue.arrayRemove([groupRef])
+        ])
+    }
+    
     func getGroupData(user: User) async throws {
         let db = Firestore.firestore()
         
@@ -69,7 +164,7 @@ class GroupsViewModel: ObservableObject {
             do {
                 let document = try await groupRef.getDocument()
                 if let groupData = try? document.data(as: Group.self) {
-                    groups.append(groupData)
+                    groups[groupRef.documentID] = groupData
                 } else {
                     print("document for group does not exist / does not match :'(")
                 }
@@ -78,7 +173,7 @@ class GroupsViewModel: ObservableObject {
             }
         }
                 
-        for group in groups {
+        for group in groups.values {
             for memberID in group.members {
                 if visibleUsers[memberID] == nil && memberID != user.id {
                     let query = db.collection("users").document(memberID)
@@ -96,6 +191,5 @@ class GroupsViewModel: ObservableObject {
                 }
             }
         }
-        print("Count: \(visibleUsers.count)")
     }
 }
