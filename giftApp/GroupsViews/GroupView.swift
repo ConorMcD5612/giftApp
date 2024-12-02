@@ -10,14 +10,13 @@ import SwiftUI
 struct GroupView: View {
     @EnvironmentObject var appController: AppController
     @EnvironmentObject var settings: GroupsViewModel
-    @Binding var group: Group
-
+        
     @State var searchEntry: String = ""
     
     var body: some View {
         VStack {
             HStack {
-                Text(group.name)
+                Text(settings.getSelectedGroup().name)
                 Spacer()
             }.font(.largeTitle)
             .padding([.leading, .trailing])
@@ -27,10 +26,10 @@ struct GroupView: View {
             
             ScrollView(showsIndicators: false) {
                 VStack {
-                    ForEach(Array(group.memberGiftIdeas.keys).sorted(), id: \.self) { memberID in
-                        if memberID != appController.userViewModel?.user?.id && group.members.contains(memberID) {
+                    ForEach(Array(settings.getSelectedGroup().memberGiftIdeas.keys).sorted(), id: \.self) { memberID in
+                        if memberID != appController.userViewModel?.user?.id && settings.getSelectedGroup().members.contains(memberID) {
                             IconButton(text: settings.visibleUsers[memberID]?.name ?? "") {
-                                settings.selectedUser = settings.visibleUsers[memberID]
+                                settings.selectedUser = memberID
                                 settings.path.append(.memberGiftIdeasView)
                             }
                         }

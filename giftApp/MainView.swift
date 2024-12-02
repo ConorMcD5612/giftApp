@@ -13,7 +13,7 @@ struct MainView: View {
     @StateObject var personalViewModel: PersonalViewModel = PersonalViewModel()
     @StateObject var groupsViewModel: GroupsViewModel = GroupsViewModel()
     @StateObject var calendarViewModel: CalendarViewModel = CalendarViewModel()
-    @State var signedIn = (Auth.auth().currentUser != nil)
+    @State var signedIn: Bool = (Auth.auth().currentUser != nil)
     
     @State var selection: Int = 0
     
@@ -49,9 +49,7 @@ struct MainView: View {
                     Text("Calendar")
                 }.tag(2)
             }
-        }
-        .onAppear {
-            // _ used to silence warning for unused var from addStateDidChangeListener
+        }.onAppear {
             _ = Auth.auth().addStateDidChangeListener {auth, user in
                 signedIn = user != nil ? true : false
             }

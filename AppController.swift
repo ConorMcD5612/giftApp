@@ -17,7 +17,7 @@ class AppController: ObservableObject {
     
     var email: String = ""
     var password: String = ""
-    
+    var signinComplete: Bool = false
     
     func GSignIn() async throws{
         do {
@@ -51,7 +51,7 @@ class AppController: ObservableObject {
             let document = try await query.getDocument()
             
             if !document.exists {
-                try db.collection("users").document(UID).setData(from: User(uid: nil, name: googleUserData?.givenName ?? "", email: googleUserData?.email ?? ""))
+                try db.collection("users").document(UID).setData(from: User(uid: nil, name: googleUserData?.name ?? "", email: googleUserData?.email ?? ""))
             }
             print("Gsignin worked")
         } catch {
@@ -66,6 +66,15 @@ class AppController: ObservableObject {
     
     func signIn() async throws{
         try await Auth.auth().signIn(withEmail: email, password: password)
+    }
+    
+    // For debug purposes only
+    func deleteUser() async throws {
+        let db = Firestore.firestore()
+        guard let UID = Auth.auth().currentUser?.uid else {return}
+        try await db.collection("users").document(UID).delete()
+        try await Auth.auth().currentUser?.delete()
+        try Auth.auth().signOut()
     }
     
     func signUp(name: String, email: String, password: String) async throws {

@@ -12,9 +12,7 @@ struct ProfileView: View {
     @EnvironmentObject var settings: GroupsViewModel
     @Environment(\.dismiss) private var dismiss
     @State var signoutConfirmation: Bool = false
-    
-    @Binding var user: User?
-    
+        
     func formatDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -41,7 +39,7 @@ struct ProfileView: View {
                     ZStack {
                         Circle().frame(width: 150, height: 150)
                             .foregroundStyle(.teal)
-                        Text("\(user?.name.prefix(1).uppercased() ?? "")")
+                        Text("\(settings.getSelectedUser().name.prefix(1).uppercased())")
                             .font(.largeTitle)
                             .foregroundStyle(.white)
                             .bold()
@@ -49,7 +47,7 @@ struct ProfileView: View {
                     
                     HStack {
                         Text("Name:")
-                        Text(user?.name ?? "Name not found")
+                        Text(settings.getSelectedUser().name)
                         Spacer()
                     }
                     
@@ -57,7 +55,7 @@ struct ProfileView: View {
                     
                     HStack {
                         Text("Email:")
-                        Text(user?.email ?? "Email not found")
+                        Text(settings.getSelectedUser().email)
                         Spacer()
                     }
                     
@@ -65,8 +63,8 @@ struct ProfileView: View {
                     
                     HStack {
                         Text("Birthday:")
-                        if (user?.birthday != nil) {
-                            Text("\(user?.birthmonth ?? "January") \(user?.birthday ?? 1)")
+                        if (settings.getSelectedUser().birthday != nil) {
+                            Text("\(settings.getSelectedUser().birthmonth ?? "January") \(settings.getSelectedUser().birthday ?? 1)")
                         } else {
                             Text("N/A")
                         }
@@ -81,10 +79,10 @@ struct ProfileView: View {
                             Spacer()
                         }
                         HStack {
-                            if (user?.wishlist.count == 0) {
+                            if (settings.getSelectedUser().wishlist.count == 0) {
                                 Text("Nothing")
                             } else {
-                                Text(wishlistString(wishlist: user?.wishlist ?? []))
+                                Text(wishlistString(wishlist: settings.getSelectedUser().wishlist))
                                     .multilineTextAlignment(.leading)
                             }
                             Spacer()
@@ -99,10 +97,10 @@ struct ProfileView: View {
                             Spacer()
                         }
                         HStack {
-                            if (user?.about.count == 0) {
+                            if (settings.getSelectedUser().about.count == 0) {
                                 Text("Blank")
                             } else {
-                                Text(user?.about ?? "About not found")
+                                Text(settings.getSelectedUser().about)
                                     .multilineTextAlignment(.leading)
                             }
                             Spacer()
@@ -110,8 +108,18 @@ struct ProfileView: View {
                     }
                     Spacer()
                 }
-            }
-            if (user?.id == appController.userViewModel?.user?.id && user?.id != nil) {
+            }.scrollBounceBehavior(.basedOnSize)
+            if (settings.selectedUser == appController.userViewModel?.user?.id) {
+                Button("Delete User", role: .destructive) {
+                    Task {
+                        do {
+                            try await appController.deleteUser()
+                        } catch {
+                            print("error deleting user")
+                        }
+                    }
+                }
+                
                 Button("Sign out", role: .destructive) {
                     signoutConfirmation = true
                 }
@@ -137,21 +145,20 @@ struct ProfileView: View {
         .padding()
         .toolbar() {
             ToolbarItem(placement: .principal) {
-                if user?.id == appController.userViewModel?.user?.id && user?.id != nil {
+                if settings.selectedUser == appController.userViewModel?.user?.id {
                     Text("Viewing Your Profile").font(.headline)
                 } else {
                     Text("Viewing Member Profile").font(.headline)
                 }
             }
             
-            if user?.id == appController.userViewModel?.user?.id && user?.id != nil{
+            if settings.selectedUser == appController.userViewModel?.user?.id {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("", systemImage: "square.and.pencil") {
                         settings.path.append(.editProfileView)
                     }
                 }
             }
-    
         }
     }
 }

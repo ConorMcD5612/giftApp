@@ -20,7 +20,7 @@ struct GroupsMainView: View {
                     Button("", systemImage: "person.crop.circle") {
                         let user = appController.userViewModel?.user
                         if user != nil {
-                            settings.selectedUser = user!
+                            settings.selectedUser = user?.id ?? ""
                             settings.path.append(.profileView)
                         }
                     }
@@ -40,7 +40,7 @@ struct GroupsMainView: View {
                         VStack {
                             ForEach(Array(settings.groups.values), id: \.self.id) { group in
                                 TextButton(title: group.name, text: "Members: \(settings.getMembers(from: group, currentUserID: appController.userViewModel?.user?.id ?? ""))") {
-                                    settings.selectedGroup = group
+                                    settings.selectedGroup = group.id ?? ""
                                     settings.path.append(.groupView)
                                 }
                             }
@@ -62,30 +62,38 @@ struct GroupsMainView: View {
             .navigationDestination(for: GroupsViewModel.Views.self) { view in
                 switch view {
                 case .profileView:
-                    ProfileView(user: $settings.selectedUser)
+                    ProfileView()
                 case .editProfileView:
                     EditProfileView()
                 case .createGroupView:
                     CreateGroupView()
                 case .groupView:
-                    GroupView(group: $settings.selectedGroup)
+                    GroupView()
                 case .editGroupView:
-                    EditGroupView(group: $settings.selectedGroup)
+                    EditGroupView()
                 case .memberGiftIdeasView:
-                    MemberGiftIdeasView(user: $settings.selectedUser, group: $settings.selectedGroup)
+                    MemberGiftIdeasView()
                 case .addMemberGiftIdeaView:
-                    AddGroupGiftIdeaView(recipient: $settings.selectedUser, group: $settings.selectedGroup)
+                    AddGroupGiftIdeaView()
+                case .memberGiftIdeaView:
+                    GroupGiftIdeaView()
+                case .editMemberGiftIdeaView:
+                    EditMemberGiftIdeaView()
                 }
             }
         }
         .onAppear {
             Task {
+                // Bandaid fix for a race condition that I cannot
+                // exude the slightest care about at this point
+                try? await Task.sleep(nanoseconds: 500_000_000)
                 if (settings.groups.count == 0) {
                     loadingGroups = true
                 }
                 try await appController.initUserData()
                 let user: User? = appController.userViewModel?.user
                 if user != nil {
+                    settings.visibleUsers[(user?.id)!] = user!
                     try await settings.getGroupData(user: user!)
                 }
                 loadingGroups = false

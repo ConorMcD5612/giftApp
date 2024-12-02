@@ -10,10 +10,6 @@ import SwiftUI
 struct MemberGiftIdeasView: View {
     @EnvironmentObject var appController: AppController
     @EnvironmentObject var settings: GroupsViewModel
-    
-    @Binding var user: User?
-    @Binding var group: Group
-        
     @State var searchEntry: String = ""
     
     var body: some View {
@@ -27,7 +23,7 @@ struct MemberGiftIdeasView: View {
                     }
                 }.font(.largeTitle)
                 HStack {
-                    Text("For \(user?.name ?? "") in \(group.name)")
+                    Text("For \(settings.getSelectedUser().name) in \(settings.getSelectedGroup().name)")
                         .foregroundStyle(.gray)
                     Spacer()
                 }
@@ -37,10 +33,13 @@ struct MemberGiftIdeasView: View {
                 .padding([.leading, .trailing])
             
             ScrollView(showsIndicators: false) {
-                if (group.memberGiftIdeas[user?.id ?? ""]?.count ?? -1 > 0) {
+                if (settings.getSelectedGroup().memberGiftIdeas[settings.selectedUser]?.count ?? -1 > 0) {
                     VStack {
-                        ForEach(group.memberGiftIdeas[user?.id ?? ""] ?? []) { idea in
-                            TextButton(title: idea.name, trailingTitle: idea.creationDate.formatted(date: .abbreviated, time: .omitted), text: idea.description)
+                        ForEach(settings.getSelectedGroup().memberGiftIdeas[settings.selectedUser] ?? []) { idea in
+                            TextButton(title: idea.name, trailingTitle: idea.creationDate.formatted(date: .abbreviated, time: .omitted), text: idea.description) {
+                                settings.selectedGiftIdea = idea.id
+                                settings.path.append(.memberGiftIdeaView)
+                            }
                         }
                     }
                 } else {
@@ -51,7 +50,7 @@ struct MemberGiftIdeasView: View {
             Spacer()
         }.toolbar() {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("About \(user?.name ?? "")") {
+                Button("About \(settings.getSelectedUser().name)") {
                     settings.path.append(.profileView)
                 }
             }

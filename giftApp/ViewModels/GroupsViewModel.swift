@@ -12,22 +12,35 @@ import FirebaseFirestore
 
 class GroupsViewModel: ObservableObject {
     enum Views {
-        case profileView, editProfileView, createGroupView, groupView, editGroupView, memberGiftIdeasView, addMemberGiftIdeaView
+        case profileView, editProfileView, createGroupView, groupView, editGroupView, memberGiftIdeasView, addMemberGiftIdeaView, memberGiftIdeaView, editMemberGiftIdeaView
     }
     
     @Published var groups: [String : Group]
     @Published var visibleUsers: [String : User]
     @Published var path: [Views]
-    @Published var selectedGroup: Group
-    @Published var selectedUser: User?
+    @Published var selectedGroup: String
+    @Published var selectedUser: String
+    @Published var selectedGiftIdea: UUID
     
     init() {
         self.groups = [:]
         self.visibleUsers = [:]
         self.path = []
-        // Placeholder; never get utilized; to avoid using optionals
-        self.selectedGroup = Group(name: "", members: [])
-        self.selectedUser = nil
+        self.selectedGroup = ""
+        self.selectedUser = ""
+        self.selectedGiftIdea = UUID()
+    }
+    
+    func getSelectedGroup() -> Group {
+        return groups[selectedGroup] ?? Group(name: "", members: [])
+    }
+    
+    func getSelectedUser() -> User {
+        return visibleUsers[selectedUser] ?? User(name: "", email: "")
+    }
+    
+    func getSelectedGiftIdea() -> GroupGiftIdea {
+        return getSelectedGroup().memberGiftIdeas[selectedUser]?.first(where: {$0.id == selectedGiftIdea}) ?? GroupGiftIdea(name: "", description: "", link: "", creationDate: Date.now, giftingDate: nil, creator: "", comments: [])
     }
     
     func getDocumentID(for email: String) async throws -> String? {
@@ -172,24 +185,91 @@ class GroupsViewModel: ObservableObject {
         ])
     }
     
-    func addGiftIdea(groupID: String, memberID: String, giftIdea: GroupGiftIdea) {
+    func addGiftIdea(groupID: String, memberID: String, giftIdea: GroupGiftIdea) async throws {
         let db = Firestore.firestore()
         
         let groupRef = db.collection("groups").document(groupID)
         
-        Task {
-            do {
-                let document = try await groupRef.getDocument()
-                if let groupData = try? document.data(as: Group.self) {
-                    groupData.memberGiftIdeas[memberID]?.append(giftIdea)
-                    try groupRef.setData(from: groupData)
-                    print("Successfully saved group gift idea")
-                } else {
-                    print("document for group does not exist / does not match :'(")
-                }
-            } catch {
-                print("fetch group data error")
+        do {
+            let document = try await groupRef.getDocument()
+            if let groupData = try? document.data(as: Group.self) {
+                groupData.memberGiftIdeas[memberID]?.insert(giftIdea, at: 0)
+                try groupRef.setData(from: groupData)
+                print("Successfully saved group gift idea")
+            } else {
+                print("document for group does not exist / does not match :'(")
             }
+        } catch {
+            print("fetch group data error")
+        }
+    }
+    
+    func updateGiftIdea(groupID: String, memberID: String, newGiftIdea: GroupGiftIdea) async throws {
+        let db = Firestore.firestore()
+        
+        let groupRef = db.collection("groups").document(groupID)
+        
+        do {
+            let document = try await groupRef.getDocument()
+            if let groupData = try? document.data(as: Group.self) {
+                let ideaIndex = groupData.memberGiftIdeas[memberID]?.firstIndex(where: {$0.id == newGiftIdea.id})
+                if (ideaIndex != nil) {
+                    groupData.memberGiftIdeas[memberID]?[ideaIndex!].name = newGiftIdea.name
+                    groupData.memberGiftIdeas[memberID]?[ideaIndex!].link = newGiftIdea.link
+                    groupData.memberGiftIdeas[memberID]?[ideaIndex!].giftingDate = newGiftIdea.giftingDate
+                    groupData.memberGiftIdeas[memberID]?[ideaIndex!].description = newGiftIdea.description
+                    try groupRef.setData(from: groupData)
+                    print("Successfully updated group gift idea")
+                }
+            } else {
+                print("document for group does not exist / does not match :'(")
+            }
+        } catch {
+            print("fetch group data error")
+        }
+    }
+    
+    func deleteGiftIdea(groupID: String, memberID: String, giftIdeaID: UUID) async throws {
+        let db = Firestore.firestore()
+        
+        let groupRef = db.collection("groups").document(groupID)
+        
+        do {
+            let document = try await groupRef.getDocument()
+            if let groupData = try? document.data(as: Group.self) {
+                let ideaIndex = groupData.memberGiftIdeas[memberID]?.firstIndex(where: {$0.id == giftIdeaID})
+                if (ideaIndex != nil) {
+                    groupData.memberGiftIdeas[memberID]?.remove(at: ideaIndex!)
+                    try groupRef.setData(from: groupData)
+                    print("Successfully deleted group gift idea")
+                }
+            } else {
+                print("document for group does not exist / does not match :'(")
+            }
+        } catch {
+            print("fetch group data error")
+        }
+    }
+    
+    func addComment(groupID: String, memberID: String, giftIdeaID: UUID, comment: Comment) async throws {
+        let db = Firestore.firestore()
+        
+        let groupRef = db.collection("groups").document(groupID)
+        
+        do {
+            let document = try await groupRef.getDocument()
+            if let groupData = try? document.data(as: Group.self) {
+                let ideaIndex = groupData.memberGiftIdeas[memberID]?.firstIndex(where: {$0.id == giftIdeaID})
+                if (ideaIndex != nil) {
+                    groupData.memberGiftIdeas[memberID]?[ideaIndex!].comments.insert(comment, at: 0)
+                    try groupRef.setData(from: groupData)
+                    print("Successfully added comment to gift idea")
+                }
+            } else {
+                print("document for group does not exist / does not match :'(")
+            }
+        } catch {
+            print("fetch group data error")
         }
     }
     
@@ -211,21 +291,20 @@ class GroupsViewModel: ObservableObject {
                 
         for group in groups.values {
             for memberID in group.members {
-                if visibleUsers[memberID] == nil && memberID != user.id {
-                    let query = db.collection("users").document(memberID)
-                    
-                    do {
-                        let document = try await query.getDocument()
-                        if let userData = try? document.data(as: User.self) {
-                            visibleUsers[memberID] = userData
-                        } else {
-                            print("document for group user \(memberID) does not exist / does not match :'(")
-                        }
-                    } catch {
-                        print("fetch group data error")
+                let query = db.collection("users").document(memberID)
+                
+                do {
+                    let document = try await query.getDocument()
+                    if let userData = try? document.data(as: User.self) {
+                        visibleUsers[memberID] = userData
+                    } else {
+                        print("document for group user \(memberID) does not exist / does not match :'(")
                     }
+                } catch {
+                    print("fetch group data error")
                 }
             }
         }
+        print("Group data fetched")
     }
 }

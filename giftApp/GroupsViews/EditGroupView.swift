@@ -14,7 +14,7 @@ struct EditGroupView: View {
     // Used to pop view from NavigationStack
     @Environment(\.dismiss) private var dismiss
     
-    @Binding var group: Group
+    @State var group: Group = Group(name: "", members: [])
     
     @State var name: String = ""
     @State var memberEmail: String = ""
@@ -194,6 +194,7 @@ struct EditGroupView: View {
             }
         }
         .onAppear() {
+            group = settings.getSelectedGroup()
             name = group.name
             loadingMembers = true
             Task {

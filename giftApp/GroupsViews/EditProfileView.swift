@@ -63,6 +63,7 @@ struct EditProfileView: View {
         Task {
             do {
                 try await appController.userViewModel?.saveUserData()
+                try await settings.getGroupData(user: (appController.userViewModel?.user)!)
             } catch {
                 print("Write gift view didn't work")
             }

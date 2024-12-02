@@ -1,24 +1,26 @@
 //
-//  AddGroupGiftIdeaView
+//  EditMemberGiftIdeaView.swift
 //  giftApp
 //
-//  Created by jmathies on 12/1/24.
+//  Created by jmathies on 12/2/24.
 //
 
 import SwiftUI
 
-struct AddGroupGiftIdeaView: View {
+struct EditMemberGiftIdeaView: View {
     @EnvironmentObject var appController: AppController
     @EnvironmentObject var settings: GroupsViewModel
+    // Used to pop view from NavigationStack
     @Environment(\.dismiss) private var dismiss
-    
+
     @State var name: String = ""
     @State var giftingDate: Date = Date()
     @State var description: String = ""
     @State var link: String = ""
     
-    @State var confirmation: Bool = false
     @State var expectedGiftingDate: Bool = false
+    @State var cancelConfirmation: Bool = false
+    @State var deleteConfirmation: Bool = false
         
     var MAX_NAME_LENGTH: Int = 32
     var MAX_DESCRIPTION_LENGTH: Int = 320
@@ -34,7 +36,6 @@ struct AddGroupGiftIdeaView: View {
                     Spacer()
                 }
             }
-            
             Divider()
             
             VStack(spacing: 5) {
@@ -69,6 +70,21 @@ struct AddGroupGiftIdeaView: View {
             StyledTextEditor(title: "Description", entry: $description, characterLimit: MAX_DESCRIPTION_LENGTH)
             
             Spacer()
+            
+            Button("Delete Gift Idea", role: .destructive) {
+                deleteConfirmation = true
+            }.confirmationDialog("Are you sure you want to delete this gift idea?", isPresented: $deleteConfirmation, titleVisibility: .visible) {
+                Button("Delete", role: .destructive) {
+                    Task {
+                        try await settings.deleteGiftIdea(groupID: settings.selectedGroup, memberID: settings.selectedUser, giftIdeaID: settings.selectedGiftIdea)
+                        try await settings.getGroupData(user: (appController.userViewModel?.user)!)
+                    }
+                    settings.path.removeLast(2)
+                }
+                Button("Cancel", role: .cancel) {
+                    deleteConfirmation = false
+                }
+            }
         }.padding([.leading, .trailing], 20)
         .padding([.top, .bottom], 10)
         
@@ -83,37 +99,55 @@ struct AddGroupGiftIdeaView: View {
         .toolbar() {
             ToolbarItem(placement: .principal) {
                 VStack {
-                    Text("Creating New Gift Idea").font(.headline)
-                    Text("For \(settings.getSelectedUser().name)").font(.subheadline)
+                    Text("Editing Gift Idea").font(.headline)
                 }
             }
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
-                    if (name.count != 0 || expectedGiftingDate || link.count != 0 || description.count != 0) {
-                        confirmation = true
+                    if (name != settings.getSelectedGiftIdea().name || link != settings.getSelectedGiftIdea().link || description != settings.getSelectedGiftIdea().description || expectedGiftingDate && giftingDate != settings.getSelectedGiftIdea().giftingDate || !expectedGiftingDate && settings.getSelectedGiftIdea().giftingDate != nil) {
+                        cancelConfirmation = true
                     } else {
                         dismiss()
                     }
-                }.confirmationDialog("Are you sure you want to discard this new gift idea?", isPresented: $confirmation, titleVisibility: .visible) {
+                }.confirmationDialog("Are you sure you want to discard these changes?", isPresented: $cancelConfirmation, titleVisibility: .visible) {
                     Button("Discard Changes", role: .destructive) {
-                        confirmation = false
+                        cancelConfirmation = false
                         dismiss()
                     }
                     Button("Cancel", role: .cancel) {
-                        confirmation = false
+                        cancelConfirmation = false
                     }
                 }
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
+                    let giftIdea = settings.getSelectedGiftIdea()
+                    giftIdea.name = name
+                    giftIdea.link = link
+                    if expectedGiftingDate {
+                        giftIdea.giftingDate = giftingDate
+                    } else {
+                        giftIdea.giftingDate = nil
+                    }
+                    giftIdea.description = description
+                    
                     Task {
-                        try await settings.addGiftIdea(groupID: settings.selectedGroup, memberID: settings.selectedUser, giftIdea: GroupGiftIdea(name: name, description: description, link: link, creationDate: Date.now, giftingDate: giftingDate, creator: appController.userViewModel?.user?.id ?? "", comments: []))
+                        try await settings.updateGiftIdea(groupID: settings.selectedGroup, memberID: settings.selectedUser, newGiftIdea: giftIdea)
                         try await settings.getGroupData(user: (appController.userViewModel?.user)!)
-                        settings.objectWillChange.send()
                     }
                     dismiss()
                 }.disabled(name.count == 0)
             }
+        }
+        .onAppear() {
+            let giftIdea = settings.getSelectedGiftIdea()
+            name = giftIdea.name
+            if (giftIdea.giftingDate != nil) {
+                expectedGiftingDate = true
+                giftingDate = giftIdea.giftingDate!
+            }
+            link = giftIdea.link
+            description = giftIdea.description
         }
     }
 }
