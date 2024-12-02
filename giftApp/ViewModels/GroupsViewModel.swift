@@ -12,20 +12,22 @@ import FirebaseFirestore
 
 class GroupsViewModel: ObservableObject {
     enum Views {
-        case profileView, editProfileView, createGroupView, groupView, editGroupView
+        case profileView, editProfileView, createGroupView, groupView, editGroupView, memberGiftIdeasView, addMemberGiftIdeaView
     }
     
     @Published var groups: [String : Group]
     @Published var visibleUsers: [String : User]
     @Published var path: [Views]
     @Published var selectedGroup: Group
+    @Published var selectedUser: User?
     
     init() {
         self.groups = [:]
         self.visibleUsers = [:]
         self.path = []
-        // Placeholder; never gets utilized; to avoid using optionals
+        // Placeholder; never get utilized; to avoid using optionals
         self.selectedGroup = Group(name: "", members: [])
+        self.selectedUser = nil
     }
     
     func getDocumentID(for email: String) async throws -> String? {
@@ -81,12 +83,20 @@ class GroupsViewModel: ObservableObject {
     
     func createGroup(group: Group) {
         let db = Firestore.firestore()
+        
+        for memberID in group.members {
+            group.memberGiftIdeas[memberID] = []
+        }
+        
         do {
             let groupRef = try db.collection("groups").addDocument(from: group)
             for memberID in group.members {
                 let userRef = db.collection("users").document(memberID)
                 userRef.updateData([
                     "groups": FieldValue.arrayUnion([groupRef])
+                ])
+                groupRef.updateData([
+                    "memberGiftIdeas.\(memberID)": []
                 ])
             }
         } catch {
@@ -107,6 +117,11 @@ class GroupsViewModel: ObservableObject {
                     // User is being added to group
                     if !origMembers.contains(memberID) {
                         addMember(groupID: group.id!, memberID: memberID)
+                        if origGroupData.memberGiftIdeas[memberID] == nil {
+                            try await groupRef.updateData([
+                                "memberGiftIdeas.\(memberID)": []
+                            ])
+                        }
                     }
                 }
                 
@@ -134,7 +149,7 @@ class GroupsViewModel: ObservableObject {
         let userRef = db.collection("users").document(memberID)
         
         groupRef.updateData([
-            "members": FieldValue.arrayUnion([memberID])
+            "members": FieldValue.arrayUnion([memberID]),
         ])
         
         userRef.updateData([
@@ -157,6 +172,27 @@ class GroupsViewModel: ObservableObject {
         ])
     }
     
+    func addGiftIdea(groupID: String, memberID: String, giftIdea: GroupGiftIdea) {
+        let db = Firestore.firestore()
+        
+        let groupRef = db.collection("groups").document(groupID)
+        
+        Task {
+            do {
+                let document = try await groupRef.getDocument()
+                if let groupData = try? document.data(as: Group.self) {
+                    groupData.memberGiftIdeas[memberID]?.append(giftIdea)
+                    try groupRef.setData(from: groupData)
+                    print("Successfully saved group gift idea")
+                } else {
+                    print("document for group does not exist / does not match :'(")
+                }
+            } catch {
+                print("fetch group data error")
+            }
+        }
+    }
+    
     func getGroupData(user: User) async throws {
         let db = Firestore.firestore()
         
@@ -166,7 +202,7 @@ class GroupsViewModel: ObservableObject {
                 if let groupData = try? document.data(as: Group.self) {
                     groups[groupRef.documentID] = groupData
                 } else {
-                    print("document for group does not exist / does not match :'(")
+                    print("group document \(groupRef.documentID) does not exist / does not match ")
                 }
             } catch {
                 print("fetch group data error")

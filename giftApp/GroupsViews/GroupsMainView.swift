@@ -18,7 +18,11 @@ struct GroupsMainView: View {
             VStack {
                 HStack {
                     Button("", systemImage: "person.crop.circle") {
-                        settings.path.append(.profileView)
+                        let user = appController.userViewModel?.user
+                        if user != nil {
+                            settings.selectedUser = user!
+                            settings.path.append(.profileView)
+                        }
                     }
                     Text("Your Groups")
                     Spacer()
@@ -58,7 +62,7 @@ struct GroupsMainView: View {
             .navigationDestination(for: GroupsViewModel.Views.self) { view in
                 switch view {
                 case .profileView:
-                    ProfileView()
+                    ProfileView(user: $settings.selectedUser)
                 case .editProfileView:
                     EditProfileView()
                 case .createGroupView:
@@ -67,6 +71,10 @@ struct GroupsMainView: View {
                     GroupView(group: $settings.selectedGroup)
                 case .editGroupView:
                     EditGroupView(group: $settings.selectedGroup)
+                case .memberGiftIdeasView:
+                    MemberGiftIdeasView(user: $settings.selectedUser, group: $settings.selectedGroup)
+                case .addMemberGiftIdeaView:
+                    AddGroupGiftIdeaView(recipient: $settings.selectedUser, group: $settings.selectedGroup)
                 }
             }
         }

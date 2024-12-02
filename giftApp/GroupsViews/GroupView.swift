@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GroupView: View {
+    @EnvironmentObject var appController: AppController
     @EnvironmentObject var settings: GroupsViewModel
     @Binding var group: Group
 
@@ -18,9 +19,6 @@ struct GroupView: View {
             HStack {
                 Text(group.name)
                 Spacer()
-                Button("+") {
-                    // TODO: Create Add Gift Idea Menu
-                }
             }.font(.largeTitle)
             .padding([.leading, .trailing])
 
@@ -28,11 +26,16 @@ struct GroupView: View {
             .padding([.leading, .trailing])
             
             ScrollView(showsIndicators: false) {
-//                VStack {
-//                    ForEach(Array(settings.groups.values), id: \.self.id) { group in
-//                        TextButton(title: group.name, text: "Members: You")
-//                    }
-//                }
+                VStack {
+                    ForEach(Array(group.memberGiftIdeas.keys).sorted(), id: \.self) { memberID in
+                        if memberID != appController.userViewModel?.user?.id && group.members.contains(memberID) {
+                            IconButton(text: settings.visibleUsers[memberID]?.name ?? "") {
+                                settings.selectedUser = settings.visibleUsers[memberID]
+                                settings.path.append(.memberGiftIdeasView)
+                            }
+                        }
+                    }
+                }
             }.padding([.top, .bottom])
             .scrollBounceBehavior(.basedOnSize)
             

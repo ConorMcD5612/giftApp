@@ -138,6 +138,10 @@ struct EditGroupView: View {
                     if userID != nil {
                         settings.removeMember(groupID: group.id!, memberID: userID!)
                         settings.groups[group.id!] = nil
+                        Task {
+                            try await appController.userViewModel?.fetchUserData()
+                            try await settings.getGroupData(user: (appController.userViewModel?.user)!)
+                        }
                         settings.path.removeAll()
                     } else {
                         print("Invalid userID when trying to leave group")
@@ -181,7 +185,9 @@ struct EditGroupView: View {
                     group.members = Array(members.values).sorted()
                     Task {
                         try await settings.updateGroup(group: group)
+                        try await appController.userViewModel?.fetchUserData()
                         try await settings.getGroupData(user: (appController.userViewModel?.user)!)
+                        settings.objectWillChange.send()
                     }
                     dismiss()
                 }.disabled(name.count == 0)

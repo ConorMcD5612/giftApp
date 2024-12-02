@@ -13,6 +13,8 @@ struct ProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @State var signoutConfirmation: Bool = false
     
+    @Binding var user: User?
+    
     func formatDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -39,7 +41,7 @@ struct ProfileView: View {
                     ZStack {
                         Circle().frame(width: 150, height: 150)
                             .foregroundStyle(.teal)
-                        Text("\(appController.userViewModel?.user?.name.prefix(1).uppercased() ?? "")")
+                        Text("\(user?.name.prefix(1).uppercased() ?? "")")
                             .font(.largeTitle)
                             .foregroundStyle(.white)
                             .bold()
@@ -47,7 +49,7 @@ struct ProfileView: View {
                     
                     HStack {
                         Text("Name:")
-                        Text(appController.userViewModel?.user?.name ?? "Name not found")
+                        Text(user?.name ?? "Name not found")
                         Spacer()
                     }
                     
@@ -55,7 +57,7 @@ struct ProfileView: View {
                     
                     HStack {
                         Text("Email:")
-                        Text(appController.userViewModel?.user?.email ?? "Email not found")
+                        Text(user?.email ?? "Email not found")
                         Spacer()
                     }
                     
@@ -63,8 +65,8 @@ struct ProfileView: View {
                     
                     HStack {
                         Text("Birthday:")
-                        if (appController.userViewModel?.user?.birthday != nil) {
-                            Text("\(appController.userViewModel?.user?.birthmonth ?? "January") \(appController.userViewModel?.user?.birthday ?? 1)")
+                        if (user?.birthday != nil) {
+                            Text("\(user?.birthmonth ?? "January") \(user?.birthday ?? 1)")
                         } else {
                             Text("N/A")
                         }
@@ -79,10 +81,10 @@ struct ProfileView: View {
                             Spacer()
                         }
                         HStack {
-                            if (appController.userViewModel?.user?.wishlist.count == 0) {
+                            if (user?.wishlist.count == 0) {
                                 Text("Nothing")
                             } else {
-                                Text(wishlistString(wishlist: appController.userViewModel?.user?.wishlist ?? ["Nothing"]))
+                                Text(wishlistString(wishlist: user?.wishlist ?? []))
                                     .multilineTextAlignment(.leading)
                             }
                             Spacer()
@@ -97,10 +99,10 @@ struct ProfileView: View {
                             Spacer()
                         }
                         HStack {
-                            if (appController.userViewModel?.user?.about.count == 0 || appController.userViewModel?.user?.about.count == nil) {
+                            if (user?.about.count == 0) {
                                 Text("Blank")
                             } else {
-                                Text(appController.userViewModel?.user?.about ?? "")
+                                Text(user?.about ?? "About not found")
                                     .multilineTextAlignment(.leading)
                             }
                             Spacer()
@@ -109,16 +111,25 @@ struct ProfileView: View {
                     Spacer()
                 }
             }
-            Button("Sign out", role: .destructive) {
-                signoutConfirmation = true
-            }
-            .confirmationDialog("Are you sure you want to sign out?", isPresented: $signoutConfirmation, titleVisibility: .visible) {
+            if (user?.id == appController.userViewModel?.user?.id && user?.id != nil) {
                 Button("Sign out", role: .destructive) {
-                    signoutConfirmation = false
-                    GSignOut()
+                    signoutConfirmation = true
                 }
-                Button("Cancel", role: .cancel) {
-                    signoutConfirmation = false
+                .confirmationDialog("Are you sure you want to sign out?", isPresented: $signoutConfirmation, titleVisibility: .visible) {
+                    Button("Sign out", role: .destructive) {
+                        signoutConfirmation = false
+                        Task {
+                            do {
+                                try appController.GSignOut()
+                                print("Signout successful")
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                        }
+                    }
+                    Button("Cancel", role: .cancel) {
+                        signoutConfirmation = false
+                    }
                 }
             }
         }
@@ -126,33 +137,21 @@ struct ProfileView: View {
         .padding()
         .toolbar() {
             ToolbarItem(placement: .principal) {
-                Text("Viewing Profile").font(.headline)
-            }
-            
-            ToolbarItem(placement: .confirmationAction) {
-                Button("", systemImage: "square.and.pencil") {
-                    settings.path.append(.editProfileView)
+                if user?.id == appController.userViewModel?.user?.id && user?.id != nil {
+                    Text("Viewing Your Profile").font(.headline)
+                } else {
+                    Text("Viewing Member Profile").font(.headline)
                 }
             }
-        }
-    }
-    
-    func GSignOut() {
-        Task {
-            do {
-                try appController.GSignOut()
-                print("GSignOut successful")
-            } catch {
-                print(error.localizedDescription)
+            
+            if user?.id == appController.userViewModel?.user?.id && user?.id != nil{
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("", systemImage: "square.and.pencil") {
+                        settings.path.append(.editProfileView)
+                    }
+                }
             }
+    
         }
     }
-    }
-
-
-#Preview {
-    Text("Expect no data to load in this preview")
-        .font(.headline)
-        .foregroundStyle(.red)
-    ProfileView().environmentObject(AppController())
 }

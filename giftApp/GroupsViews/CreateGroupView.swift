@@ -144,7 +144,12 @@ struct CreateGroupView: View {
                         print("creatorID DNE")
                         dismiss()
                     } else {
-                        settings.createGroup(group: Group(name: name, members: members))
+                        Task {
+                            settings.createGroup(group: Group(name: name, members: members))
+                            try await appController.userViewModel?.fetchUserData()
+                            try await settings.getGroupData(user: (appController.userViewModel?.user!)!)
+                            settings.objectWillChange.send()
+                        }
                         dismiss()
                     }
                 }.disabled(name.count == 0)

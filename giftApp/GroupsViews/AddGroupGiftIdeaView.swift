@@ -1,15 +1,15 @@
 //
-//  AddGiftIdeaView.swift
+//  AddGroupGiftIdeaView
 //  giftApp
 //
-//  Created by jmathies on 11/25/24.
+//  Created by jmathies on 12/1/24.
 //
 
 import SwiftUI
 
-struct AddGiftIdeaView: View {
-    @EnvironmentObject var settings: PersonalViewModel
-    // Used to pop view from NavigationStack
+struct AddGroupGiftIdeaView: View {
+    @EnvironmentObject var appController: AppController
+    @EnvironmentObject var settings: GroupsViewModel
     @Environment(\.dismiss) private var dismiss
 
     @State var name: String = ""
@@ -17,10 +17,11 @@ struct AddGiftIdeaView: View {
     @State var description: String = ""
     @State var link: String = ""
     
-    @State var cancelConfirmation: Bool = false
+    @State var confirmation: Bool = false
     @State var expectedGiftingDate: Bool = false
     
-    @Binding var recipient: Recipient
+    @Binding var recipient: User?
+    @Binding var group: Group
     
     var MAX_NAME_LENGTH: Int = 32
     var MAX_DESCRIPTION_LENGTH: Int = 320
@@ -70,19 +71,6 @@ struct AddGiftIdeaView: View {
             Divider()
             StyledTextEditor(title: "Description", entry: $description, characterLimit: MAX_DESCRIPTION_LENGTH)
             
-            if (recipient.interests.count != 0){
-                Divider()
-                HStack {
-                    Text("\(recipient.name)'\(recipient.name.last?.lowercased() != "s" ? "s" : "") Interests")
-                        .font(.system(size: 20))
-                    Spacer()
-                }
-                HStack {
-                    Text(recipient.interests)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-                }
-            }
             Spacer()
         }.padding([.leading, .trailing], 20)
         .padding([.top, .bottom], 10)
@@ -99,30 +87,29 @@ struct AddGiftIdeaView: View {
             ToolbarItem(placement: .principal) {
                 VStack {
                     Text("Creating New Gift Idea").font(.headline)
-                    Text("For \(recipient.name)").font(.subheadline)
+                    Text("For \(recipient?.name ?? "")").font(.subheadline)
                 }
             }
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
                     if (name.count != 0 || expectedGiftingDate || link.count != 0 || description.count != 0) {
-                        cancelConfirmation = true
+                        confirmation = true
                     } else {
                         dismiss()
                     }
-                }.confirmationDialog("Are you sure you want to discard this new gift idea?", isPresented: $cancelConfirmation, titleVisibility: .visible) {
+                }.confirmationDialog("Are you sure you want to discard this new gift idea?", isPresented: $confirmation, titleVisibility: .visible) {
                     Button("Discard Changes", role: .destructive) {
-                        cancelConfirmation = false
+                        confirmation = false
                         dismiss()
                     }
                     Button("Cancel", role: .cancel) {
-                        cancelConfirmation = false
+                        confirmation = false
                     }
                 }
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
-                    recipient.giftIdeas.insert(RecipientGiftIdea(name: name, description: description, link: link, creationDate: Date.now, giftingDate: expectedGiftingDate ? giftingDate : nil), at: 0)
-                    settings.saveChanges()
+                    settings.addGiftIdea(groupID: group.id ?? "", memberID: recipient?.id ?? "", giftIdea: GroupGiftIdea(name: name, description: description, link: link, creationDate: Date.now, giftingDate: giftingDate, creator: appController.userViewModel?.user?.id ?? "", comments: []))
                     dismiss()
                 }.disabled(name.count == 0)
             }

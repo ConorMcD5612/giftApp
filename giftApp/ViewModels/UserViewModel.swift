@@ -21,7 +21,6 @@ class UserViewModel: ObservableObject {
             print("user not authenticated")
             return
         }
-        print("ID: \(UID)")
         let query = db.collection("users").document(UID)
         
         do {
