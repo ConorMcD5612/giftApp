@@ -110,16 +110,6 @@ struct ProfileView: View {
                 }
             }.scrollBounceBehavior(.basedOnSize)
             if (settings.selectedUser == appController.userViewModel?.user?.id) {
-                Button("Delete User", role: .destructive) {
-                    Task {
-                        do {
-                            try await appController.deleteUser()
-                        } catch {
-                            print("error deleting user")
-                        }
-                    }
-                }
-                
                 Button("Sign out", role: .destructive) {
                     signoutConfirmation = true
                 }
