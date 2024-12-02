@@ -64,7 +64,7 @@ struct RecipientView: View {
         }
         .toolbar() {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Edit Group") {
+                Button("Edit Recipient") {
                     settings.path.append(.editRecipient)
                 }
             }
